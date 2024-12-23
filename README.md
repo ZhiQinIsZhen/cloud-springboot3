@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/badge/Build-ZhiQinlsZhen-red)](https://github.com/ZhiQinIsZhen)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](https://github.com/ZhiQinIsZhen/springcloud-liyz/blob/master/LICENSE)
 ![JDK Version](https://img.shields.io/badge/JDK-21-brightgreen)
-![Springboot Version](https://img.shields.io/badge/Springboot-3.3.6-brightgreen)
+![Springboot Version](https://img.shields.io/badge/Springboot-3.3.7-brightgreen)
 [![Spring Cloud](https://img.shields.io/badge/Springcloud-2023.0.4-brightgreen)](https://spring.io/projects/spring-cloud)
 ![Gateway Version](https://img.shields.io/badge/Gateway-4.1.5-brightgreen)
 ![jjwt Version](https://img.shields.io/badge/jjwt-0.12.6-brightgreen)
