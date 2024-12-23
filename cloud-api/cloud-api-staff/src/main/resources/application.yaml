@@ -77,3 +77,8 @@ knife4j:
     username: abc
     password: 123
     enable: false
+gateway:
+  auth:
+    header:
+      key: AUTH_INFO
+      secret: BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST

@@ -32,10 +32,10 @@ spring:
           predicates:
             - Path=/staff/**
           filters:
-            - name: GlobalAuthIdHeaderFilter
+            - name: GlobalAuthInfoHeaderFilter
               args:
-                name: AUTH_ID
-                value: -1
+                name: AUTH_INFO
+                value: BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST
   # redis
   data:
     redis:

@@ -28,29 +28,26 @@ import static org.springframework.cloud.gateway.support.GatewayToStringStyler.fi
  */
 @Slf4j
 @Component
-public class GlobalAuthIdHeaderFilter extends AddRequestHeaderGatewayFilterFactory implements Ordered {
-
-    private static final String AES_KEY = "BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST";
+public class GlobalAuthInfoHeaderFilter extends AddRequestHeaderGatewayFilterFactory implements Ordered {
 
     @Override
     public GatewayFilter apply(NameValueConfig config) {
         return new GatewayFilter() {
             @Override
             public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-                AuthUserBO authUserBO = exchange.getAttribute(GatewayConstant.AUTH_ID);
-                String value = authUserBO == null ? null : CryptoUtil.Symmetric.encryptAES(JsonUtil.toJSONString(authUserBO), AES_KEY);
+                AuthUserBO authUserBO = exchange.getAttribute(GatewayConstant.AUTH_INFO);
+                String authInfo = authUserBO == null ? null : CryptoUtil.Symmetric.encryptAES(JsonUtil.toJSONString(authUserBO), config.getValue());
                 ServerHttpRequest request = exchange
                         .getRequest()
                         .mutate()
-                        .headers(httpHeaders -> httpHeaders.add(config.getName(), value))
+                        .headers(httpHeaders -> httpHeaders.add(config.getName(), authInfo))
                         .build();
                 return chain.filter(exchange.mutate().request(request).build());
             }
 
             @Override
             public String toString() {
-                return filterToStringCreator(GlobalAuthIdHeaderFilter.this)
-                        .append(config.getName(), config.getValue()).toString();
+                return filterToStringCreator(GlobalAuthInfoHeaderFilter.this).append(config.getName(), config.getValue()).toString();
             }
         };
     }

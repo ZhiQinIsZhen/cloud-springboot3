@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.liyz.cloud.common.api.config.AnonymousMappingConfig;
 import com.liyz.cloud.common.api.constant.SecurityClientConstant;
 import com.liyz.cloud.common.api.context.AuthContext;
+import com.liyz.cloud.common.api.properties.GatewayAuthHeaderProperties;
 import com.liyz.cloud.common.api.user.AuthUserDetails;
 import com.liyz.cloud.common.api.util.CookieUtil;
 import com.liyz.cloud.common.exception.RemoteServiceException;
@@ -26,6 +27,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -40,13 +42,12 @@ import java.util.Objects;
 @Slf4j
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
-    private static final String AUTH_ID = "AUTH_ID";
-    private static final String AES_KEY = "BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST";
-
     private final String tokenHeaderKey;
+    private final GatewayAuthHeaderProperties properties;
 
-    public JwtAuthenticationTokenFilter(String tokenHeaderKey) {
+    public JwtAuthenticationTokenFilter(String tokenHeaderKey, GatewayAuthHeaderProperties properties) {
         this.tokenHeaderKey = tokenHeaderKey;
+        this.properties = properties;
     }
 
     /**
@@ -62,29 +63,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            AuthUserBO authUser = null;
-            String authInfo = request.getHeader(AUTH_ID);
-            if (StringUtils.isNotBlank(authInfo)) {
-                authUser = JsonUtil.readValue(CryptoUtil.Symmetric.decryptAES(authInfo, AES_KEY), AuthUserBO.class);
-            } else {
-                Cookie cookie = CookieUtil.getCookie(this.tokenHeaderKey);
-                //UriUtils、URLDecoder、URLEncoder
-                String token = Objects.isNull(cookie) ? request.getHeader(this.tokenHeaderKey) : UriUtils.decode(cookie.getValue(), StandardCharsets.UTF_8);
-                if (!AnonymousMappingConfig.pathMatch(request.getServletPath()) && StringUtils.isNotBlank(token)) {
-                    token = URLDecoder.decode(token, String.valueOf(Charsets.UTF_8));
-                    authUser = AuthContext.JwtService.parseToken(token);
-                }
-                //cookie续期
-                if (Objects.nonNull(cookie)) {
-                    CookieUtil.addCookie(
-                            response,
-                            SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY,
-                            token,
-                            30 * 60,
-                            null
-                    );
-                }
-            }
+            AuthUserBO authUser = this.getAuthUser(request, response);
             if (Objects.nonNull(authUser)) {
                 AuthUserDetails authUserDetails = AuthUserDetails.build(authUser);
                 UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(
@@ -108,5 +87,42 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContextHolderStrategy().clearContext();
             SecurityContextHolder.clearContext();
         }
+    }
+
+    /**
+     * 获取认证信息
+     * 优先级：gateway header -> cookie -> Authorization header
+     *
+     * @param request http请求
+     * @param response http返回
+     * @return 认证信息
+     */
+    private AuthUserBO getAuthUser(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        if (AnonymousMappingConfig.pathMatch(request.getServletPath())) {
+            return null;
+        }
+        String authInfo = request.getHeader(properties.getKey());
+        if (StringUtils.isNotBlank(authInfo)) {
+            return JsonUtil.readValue(CryptoUtil.Symmetric.decryptAES(authInfo, properties.getSecret()), AuthUserBO.class);
+        }
+        String token;
+        Cookie cookie = CookieUtil.getCookie(this.tokenHeaderKey);
+        if (Objects.nonNull(cookie)) {
+            token = UriUtils.decode(cookie.getValue(), StandardCharsets.UTF_8);
+        } else {
+            token = request.getHeader(this.tokenHeaderKey);
+            if (StringUtils.isNotBlank(token)) {
+                token = URLDecoder.decode(token, String.valueOf(Charsets.UTF_8));
+            }
+        }
+        if (StringUtils.isNotBlank(token)) {
+            AuthUserBO authUserBO = AuthContext.JwtService.parseToken(token);
+            //cookie续期
+            if (Objects.nonNull(cookie)) {
+                CookieUtil.addCookie(response, SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, token, 30 * 60, null);
+            }
+            return authUserBO;
+        }
+        return null;
     }
 }

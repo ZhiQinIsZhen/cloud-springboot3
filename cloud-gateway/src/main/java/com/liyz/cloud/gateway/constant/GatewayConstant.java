@@ -11,5 +11,5 @@ public interface GatewayConstant {
 
     String AUTHORIZATION = "Authorization";
 
-    String AUTH_ID = "AUTH_ID";
+    String AUTH_INFO = "AUTH_INFO";
 }

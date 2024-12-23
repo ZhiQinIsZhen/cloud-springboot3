@@ -5,8 +5,11 @@ import com.liyz.cloud.common.api.context.AuthContext;
 import com.liyz.cloud.common.api.filter.JwtAuthenticationTokenFilter;
 import com.liyz.cloud.common.api.handler.JwtAuthenticationEntryPoint;
 import com.liyz.cloud.common.api.handler.RestfulAccessDeniedHandler;
+import com.liyz.cloud.common.api.properties.GatewayAuthHeaderProperties;
 import com.liyz.cloud.common.api.user.UserDetailsServiceImpl;
+import jakarta.annotation.Resource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -38,7 +41,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@EnableConfigurationProperties(GatewayAuthHeaderProperties.class)
 public class CloudApiAutoConfig {
+
+    @Resource
+    private GatewayAuthHeaderProperties properties;
 
     @Bean
     public AuthContext authContext() {
@@ -84,7 +91,7 @@ public class CloudApiAutoConfig {
                         .requestMatchers(HttpMethod.GET, SecurityClientConstant.ACTUATOR_RESOURCES).permitAll()
                         .requestMatchers(AnonymousMappingConfig.getAnonymousMappings()).permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationTokenFilter(SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY),
+                .addFilterBefore(new JwtAuthenticationTokenFilter(SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, properties),
                         UsernamePasswordAuthenticationFilter.class)
                 .headers(hc -> hc.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 //如无需要请勿设置跨域
