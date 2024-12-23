@@ -4,7 +4,6 @@ import com.liyz.cloud.common.exception.CommonExceptionCodeEnum;
 import com.liyz.cloud.common.exception.RemoteServiceException;
 import com.liyz.cloud.common.feign.bo.auth.AuthUserBO;
 import com.liyz.cloud.common.feign.result.Result;
-import com.liyz.cloud.common.util.PatternUtil;
 import com.liyz.cloud.gateway.constant.GatewayConstant;
 import com.liyz.cloud.gateway.properties.AnonymousMappingProperties;
 import com.liyz.cloud.gateway.util.ResponseUtil;
@@ -24,14 +23,12 @@ import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriUtils;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Desc:Jwt全局过滤器
@@ -47,7 +44,7 @@ import java.util.Set;
 @Component
 @RefreshScope
 @EnableConfigurationProperties(AnonymousMappingProperties.class)
-public class GlobalJWTFilter implements GlobalFilter, Ordered {
+public class GlobalJWTFilter implements GlobalFilter, GatewayConstant, Ordered {
 
     private final AnonymousMappingProperties properties;
 
@@ -69,8 +66,8 @@ public class GlobalJWTFilter implements GlobalFilter, Ordered {
         }
         String path = request.getURI().getPath();
         String clientId = route.getId();
-        Set<String> mappingSet = properties.getServer().get(clientId);
-        if (!CollectionUtils.isEmpty(mappingSet) && (mappingSet.contains(path) || PatternUtil.pathMatch(path, mappingSet))) {
+        if (this.pathMatch(path, properties.getServer().get(GatewayConstant.DEFAULT_ANONYMOUS_MAPPING))
+                || this.pathMatch(path, properties.getServer().get(clientId))) {
             return chain.filter(exchange);
         }
         String jwt = Objects.requireNonNullElse(request.getCookies().getFirst(GatewayConstant.AUTHORIZATION),
@@ -88,7 +85,7 @@ public class GlobalJWTFilter implements GlobalFilter, Ordered {
             if (!CommonExceptionCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
                 return ResponseUtil.response(response, result.getCode(), result.getMessage());
             }
-            exchange.getAttributes().put(GatewayConstant.AUTH_ID, result.getData());
+            exchange.getAttributes().put(GatewayConstant.AUTH_INFO, result.getData());
         } catch (RemoteServiceException e) {
             return ResponseUtil.response(response, e.getCode(), e.getMessage());
         } catch (Exception e) {

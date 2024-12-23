@@ -1,4 +1,4 @@
-package com.liyz.cloud.service.staff.controller.config;
+package com.liyz.cloud.service.staff.config;
 
 import com.liyz.cloud.common.util.constant.CommonConstant;
 import org.redisson.api.RedissonClient;

@@ -10,7 +10,7 @@ CREATE TABLE `staff_auth_email` (
    `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
    PRIMARY KEY (`staff_id`) USING BTREE,
    UNIQUE KEY `uniq_email` (`email`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工邮箱认证表';
+) ENGINE=InnoDB COMMENT='员工邮箱认证表';
 
 CREATE TABLE `staff_auth_mobile` (
     `staff_id` bigint(20) unsigned NOT NULL COMMENT '员工ID',
@@ -24,7 +24,7 @@ CREATE TABLE `staff_auth_mobile` (
     `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
     PRIMARY KEY (`staff_id`) USING BTREE,
     UNIQUE KEY `uniq_mobile` (`mobile`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工手机认证表';
+) ENGINE=InnoDB COMMENT='员工手机认证表';
 
 CREATE TABLE `staff_info` (
      `staff_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '员工ID',
@@ -41,7 +41,7 @@ CREATE TABLE `staff_info` (
      `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除 | 0、未删除 1、已删除',
      `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
      PRIMARY KEY (`staff_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工基础信息表';
+) ENGINE=InnoDB COMMENT='员工基础信息表';
 
 CREATE TABLE `staff_login_log_0` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -58,7 +58,7 @@ CREATE TABLE `staff_login_log_0` (
   `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_staff_id` (`staff_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工登录日志表-0';
+) ENGINE=InnoDB COMMENT='员工登录日志表-0';
 
 CREATE TABLE `staff_login_log_1` (
 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -75,7 +75,7 @@ CREATE TABLE `staff_login_log_1` (
 `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
 PRIMARY KEY (`id`) USING BTREE,
 KEY `idx_staff_id` (`staff_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工登录日志表-1';
+) ENGINE=InnoDB COMMENT='员工登录日志表-1';
 
 CREATE TABLE `staff_logout_log_0` (
    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -92,7 +92,7 @@ CREATE TABLE `staff_logout_log_0` (
    `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
    PRIMARY KEY (`id`) USING BTREE,
    KEY `idx_staff_id` (`staff_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工登出日志表-0';
+) ENGINE=InnoDB COMMENT='员工登出日志表-0';
 
 
 CREATE TABLE `staff_logout_log_1` (
@@ -110,4 +110,4 @@ CREATE TABLE `staff_logout_log_1` (
  `version` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '版本号',
  PRIMARY KEY (`id`) USING BTREE,
  KEY `idx_staff_id` (`staff_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='员工登出日志表-1';
+) ENGINE=InnoDB COMMENT='员工登出日志表-1';

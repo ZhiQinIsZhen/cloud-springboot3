@@ -33,6 +33,11 @@
 4. `cloud-common`：基础包的框架
 5. `cloud-service`：Feign的服务提供者，即业务服务
 6. `cloud-gateway`：统一网关层，鉴权限流都会在这步做，[接口文档地址](http://127.0.0.1:8080/doc.html)
+    ```text
+    6.1 GlobalJWTFilter：认证全局过滤器
+    6.2 GlobalAuthorityFilter：鉴权全局过滤器
+    6.3 GlobalAuthInfoHeaderFilter：认证信息header透传过滤器
+    ```
 
 ## api结构说明
 1. `cloud-api-staff`: 管理后台网关层，鉴权基于spring-security，[接口文档地址](http://127.0.0.1:7071/staff/doc.html)

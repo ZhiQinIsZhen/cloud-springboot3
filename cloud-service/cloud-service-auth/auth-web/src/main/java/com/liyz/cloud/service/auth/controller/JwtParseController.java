@@ -14,6 +14,7 @@ import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.common.util.DateUtil;
 import com.liyz.cloud.common.util.PatternUtil;
 import com.liyz.cloud.common.util.constant.CommonConstant;
+import com.liyz.cloud.service.auth.feign.JwtParseFeignService;
 import com.liyz.cloud.service.auth.model.AuthJwtDO;
 import com.liyz.cloud.service.auth.service.AuthJwtService;
 import com.liyz.cloud.service.auth.util.JwtUtil;
@@ -24,7 +25,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClaims;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
@@ -51,9 +52,10 @@ import java.util.Set;
 @Anonymous
 @RestController
 @RequestMapping("/jwt")
-public class JwtParseController {
+public class JwtParseController implements JwtParseFeignService {
 
     private final static String CLAIM_DEVICE = "device";
+    private final static String ROLE_LIST = "roleIds";
 
     @Resource
     private AuthJwtService authJwtService;
@@ -62,9 +64,8 @@ public class JwtParseController {
     @Resource
     private RedissonClient redissonClient;
 
-    @Operation(summary = "解析token")
-    @GetMapping("/parseToken")
-    public Result<AuthUserBO> parseToken(@RequestParam("token") String token, @RequestParam("clientId") String clientId) {
+    @Override
+    public Result<AuthUserBO> parseToken(String token, String clientId) {
         AuthJwtDO authJwtDO = authJwtService.getByClientId(clientId);
         if (Objects.isNull(authJwtDO)) {
             log.error("解析token失败, 没有找到该应用下jwt配置信息，clientId：{}", clientId);
@@ -101,10 +102,12 @@ public class JwtParseController {
         if (!clientId.equals(claims.getAudience().stream().findFirst().orElse(StringUtils.EMPTY))) {
             throw new RemoteServiceException(CommonExceptionCodeEnum.AUTHORIZATION_FAIL);
         }
+        List<Integer> roleIds = claims.containsKey(ROLE_LIST) ? (List<Integer>) claims.get(ROLE_LIST) : Lists.newArrayList();
         //查询权限列表
         AuthUserDTO authUserDTO = new AuthUserDTO();
-        authUserDTO.setUsername(unSignClaims.getSubject());
-        authUserDTO.setDevice(Device.getByType(unSignClaims.get(CLAIM_DEVICE, Integer.class)));
+        authUserDTO.setAuthId(Long.valueOf(claims.getId()));
+        authUserDTO.setDevice(Device.getByType(claims.get(CLAIM_DEVICE, Integer.class)));
+        authUserDTO.setRoleIds(roleIds);
         Result<List<AuthUserBO.AuthGrantedAuthorityBO>> resultAuthority = staffAuthFeignService.authorities(authUserDTO);
         if (!CommonExceptionCodeEnum.SUCCESS.getCode().equals(resultAuthority.getCode())) {
             return Result.error(resultAuthority.getCode(), resultAuthority.getMessage());
@@ -115,10 +118,10 @@ public class JwtParseController {
                         .password(StringUtils.EMPTY)
                         .salt(StringUtils.EMPTY)
                         .loginType(LoginType.getByType(PatternUtil.checkMobileEmail(claims.getSubject())))
-                        .device(Device.getByType(unSignClaims.get(CLAIM_DEVICE, Integer.class)))
+                        .device(Device.getByType(claims.get(CLAIM_DEVICE, Integer.class)))
                         .authId(Long.valueOf(claims.getId()))
                         .loginKey(audienceList.get(1))
-                        .roleIds(Lists.newArrayList())
+                        .roleIds(roleIds)
                         .token(authToken)
                         .clientId(claims.getAudience().stream().findFirst().orElse(StringUtils.EMPTY))
                         .authorities(authJwtDO.getIsAuthority() ? resultAuthority.getData() : Lists.newArrayList())
@@ -126,9 +129,8 @@ public class JwtParseController {
         );
     }
 
-    @Operation(summary = "生成token")
-    @PostMapping("/generateToken")
-    public Result<AuthJwtBO> generateToken(@RequestBody AuthUserBO authUser) {
+    @Override
+    public Result<AuthJwtBO> generateToken(AuthUserBO authUser) {
         if (StringUtils.isBlank(authUser.getClientId())) {
             log.error("创建token失败，原因 : clientId is blank");
             throw new RemoteServiceException(CommonExceptionCodeEnum.LOGIN_ERROR);
@@ -149,6 +151,7 @@ public class JwtParseController {
                                 .audience().add(authUser.getClientId()).add(authUser.getLoginKey()).add(authUser.getSalt()).and()
                                 .expiration(new Date(System.currentTimeMillis() + authJwtDO.getExpiration() * 1000))
                                 .claim(CLAIM_DEVICE, authUser.getDevice().getType())
+                                .claim(ROLE_LIST, authUser.getRoleIds())
                                 .signWith(
                                         SignatureAlgorithm.forName(authJwtDO.getSignatureAlgorithm()),
                                         Keys.hmacShaKeyFor(Decoders.BASE64.decode(Joiner
@@ -160,9 +163,8 @@ public class JwtParseController {
         );
     }
 
-    @Operation(summary = "获取失效时间")
-    @GetMapping("/getExpiration")
-    public Result<Long> getExpiration(@RequestParam("token") final String token) {
+    @Override
+    public Result<Long> getExpiration(String token) {
         return Result.success(this.parseClaimsJws(token).getExpiration().getTime());
     }
 

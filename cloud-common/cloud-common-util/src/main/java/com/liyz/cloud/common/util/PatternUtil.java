@@ -99,4 +99,21 @@ public class PatternUtil {
         }
         return false;
     }
+
+    /**
+     * 地址与目标地址是否匹配
+     *
+     * @param targetPath 目标地址
+     * @param sourcePath 原地址
+     * @return boolean
+     */
+    public static boolean pathMatch(String targetPath, String sourcePath) {
+        if (StringUtils.isAnyBlank(targetPath, sourcePath)) {
+            return false;
+        }
+        if (new AntPathMatcher().match(sourcePath, targetPath)) {
+            return true;
+        }
+        return false;
+    }
 }

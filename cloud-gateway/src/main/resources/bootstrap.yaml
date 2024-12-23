@@ -61,20 +61,22 @@ knife4j:
 anonymous:
   mapping:
     server:
+      common-api:
+        - /*/v3/api-docs/**
       cloud-api-staff:
-        - /staff/v3/api-docs/**
         - /staff/auth/register
         - /staff/auth/login
-        - /staff/test/**
-      cloud-api-user:
-        - /user/v3/api-docs/**
-        - /user/user/register
-        - /user/user/login
-        - /user/test/**
-        - /user/export/**
-        - /user/search/company/**
-        - /user/search/investor/**
-        - /user/search/financing/**
+## 权限
+authority:
+  mapping:
+    white:
+      common-api:
+        - /*/auth/logout
+      cloud-api-staff:
+        - /staff/staff/current
+        - /staff/staff/login/page
+        - /staff/staff/logout/page
+# log
 logging:
   file:
     name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'

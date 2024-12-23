@@ -19,8 +19,8 @@ import java.util.Set;
 @Getter
 @Setter
 @RefreshScope
-@ConfigurationProperties(prefix = "anonymous.mapping")
-public class AnonymousMappingProperties {
+@ConfigurationProperties(prefix = "authority.mapping")
+public class AuthorityMappingProperties {
 
-    private Map<String, Set<String>> server = new HashMap<>();
+    private Map<String, Set<String>> white = new HashMap<>();
 }

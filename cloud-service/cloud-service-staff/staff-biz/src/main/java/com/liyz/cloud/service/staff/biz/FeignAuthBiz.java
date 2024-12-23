@@ -1,6 +1,7 @@
 package com.liyz.cloud.service.staff.biz;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.common.collect.Lists;
 import com.liyz.cloud.common.base.util.BeanUtil;
 import com.liyz.cloud.common.exception.CommonExceptionCodeEnum;
 import com.liyz.cloud.common.exception.RemoteServiceException;
@@ -125,7 +126,7 @@ public class FeignAuthBiz {
         authUser.setSalt(staffInfoDO.getSalt());
         //查询角色信息
         List<StaffRoleDO> roles = staffRoleService.list(Wrappers.query(StaffRoleDO.builder().staffId(staffId).build()));
-        authUser.setRoleIds(CollectionUtils.isEmpty(roles) ? null : roles.stream().map(StaffRoleDO::getRoleId).collect(Collectors.toList()));
+        authUser.setRoleIds(CollectionUtils.isEmpty(roles) ? Lists.newArrayList() : roles.stream().map(StaffRoleDO::getRoleId).collect(Collectors.toList()));
         StaffLoginLogDO staffLoginLogDO = BeanUtil.copyProperties(authUserLogin, StaffLoginLogDO::new, (s, t) -> {
             t.setStaffId(staffId);
             t.setLoginTime(DateUtil.date());

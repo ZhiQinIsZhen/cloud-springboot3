@@ -10,13 +10,13 @@ import com.liyz.cloud.common.feign.dto.auth.AuthUserLogoutDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserRegisterDTO;
 import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.common.util.RandomUtil;
+import com.liyz.cloud.service.auth.feign.AuthFeignService;
 import com.liyz.cloud.service.auth.model.AuthJwtDO;
 import com.liyz.cloud.service.auth.model.AuthSourceDO;
 import com.liyz.cloud.service.auth.service.AuthJwtService;
 import com.liyz.cloud.service.auth.service.AuthSourceService;
 import com.liyz.cloud.service.auth.util.RedisUtil;
 import com.liyz.cloud.service.staff.feign.StaffAuthFeignService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,7 +45,7 @@ import java.util.Objects;
 @Tag(name = "客户鉴权")
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthFeignService {
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -60,9 +58,9 @@ public class AuthController {
     @Resource
     private RedissonClient redissonClient;
 
-    @Operation(summary = "用户注册")
-    @PostMapping("/register")
-    public Result<Boolean> registry(@RequestBody AuthUserRegisterDTO authUserRegister) {
+
+    @Override
+    public Result<Boolean> registry(AuthUserRegisterDTO authUserRegister) {
         if (StringUtils.isBlank(authUserRegister.getClientId())) {
             throw new RemoteServiceException(CommonExceptionCodeEnum.LACK_SOURCE_ID);
         }
@@ -75,9 +73,8 @@ public class AuthController {
         return staffAuthFeignService.registry(authUserRegister);
     }
 
-    @Operation(summary = "登录")
-    @PostMapping("/login")
-    public Result<AuthUserBO> login(@RequestBody AuthUserLoginDTO authUserLogin) {
+    @Override
+    public Result<AuthUserBO> login(AuthUserLoginDTO authUserLogin) {
         final String clientId = authUserLogin.getClientId();
         if (StringUtils.isBlank(clientId)) {
             log.warn("用户登录错误，原因 : clientId is blank");
@@ -107,9 +104,8 @@ public class AuthController {
         return result;
     }
 
-    @Operation(summary = "登出")
-    @PostMapping("/logout")
-    public Result<Boolean> logout(@RequestBody AuthUserLogoutDTO authUserLogout) {
+    @Override
+    public Result<Boolean> logout(AuthUserLogoutDTO authUserLogout) {
         if (StringUtils.isBlank(authUserLogout.getClientId())) {
             return Result.success(Boolean.FALSE);
         }
@@ -124,9 +120,8 @@ public class AuthController {
         return staffAuthFeignService.logout(authUserLogout);
     }
 
-    @Operation(summary = "获取权限列表")
-    @PostMapping("/authorities")
-    public Result<List<AuthUserBO.AuthGrantedAuthorityBO>> authorities(@RequestBody AuthUserDTO authUser) {
+    @Override
+    public Result<List<AuthUserBO.AuthGrantedAuthorityBO>> authorities(AuthUserDTO authUser) {
         if (StringUtils.isBlank(authUser.getClientId())) {
             log.warn("获取权限错误，原因 : client is blank");
             return Result.success(new ArrayList<>());

@@ -39,7 +39,7 @@ CREATE TABLE `auth_jwt` (
     UNIQUE KEY `uniq_client_id` (`client_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证服务jwt信息配置表';
 
-INSERT INTO `auth`.`auth_jwt1` VALUES
-(1, 'cloud-api-staff', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0),
+INSERT INTO `auth`.`auth_jwt` VALUES
+(1, 'cloud-api-staff', 'Bearer ', 'Bonnie', 604800, 'HS512', 1, 1, -1, -1, now(), now(), 0, 0),
 (2, 'cloud-api-user', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0),
 (3, 'cloud-service-auth', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0);
