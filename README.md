@@ -6,6 +6,7 @@
 ![Springboot Version](https://img.shields.io/badge/Springboot-3.3.7-brightgreen)
 [![Spring Cloud](https://img.shields.io/badge/Springcloud-2023.0.4-brightgreen)](https://spring.io/projects/spring-cloud)
 ![Gateway Version](https://img.shields.io/badge/Gateway-4.1.5-brightgreen)
+![Springboot-Admin Version](https://img.shields.io/badge/Admin-3.3.6-brightgreen)
 ![jjwt Version](https://img.shields.io/badge/jjwt-0.12.6-brightgreen)
 ![Mybatis-plus Version](https://img.shields.io/badge/MybatisPlus-3.5.9-brightgreen)
 ![Sharding-jdbc Version](https://img.shields.io/badge/ShardingJdbc-5.5.1-brightgreen)
@@ -19,7 +20,7 @@
 - 网关基于：Spring-cloud-gateway
 - 数据ORM基于：Mybatis-plus
 - 注册中心基于：Eureka
-- 监控中心基于：Spring Admin
+- 监控中心基于：Springboot Admin
 - 登陆安全基于：Spring Security、jjwt
 - 接口文档基于：knife4j
 - 分库分表读写分离基于：Sharding-jdbc
@@ -41,7 +42,7 @@
 
 ## api结构说明
 1. `cloud-api-staff`: 管理后台网关层，鉴权基于spring-security，[接口文档地址](http://127.0.0.1:7071/staff/doc.html)
-2. `cloud-api-monitor`: 监控平台
+2. `cloud-api-monitor`: 监控平台 [监控地址](http://127.0.0.1:7060)
 
 ## common结构说明
 1. `cloud-common-api`: 通用web或者网关层框架，以及SpringSecurity鉴权实现

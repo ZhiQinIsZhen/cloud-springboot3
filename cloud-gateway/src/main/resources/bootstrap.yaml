@@ -80,4 +80,14 @@ authority:
 logging:
   file:
     name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'
+# management
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  endpoint:
+    health:
+      show-details: when_authorized
 

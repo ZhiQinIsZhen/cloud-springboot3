@@ -57,6 +57,9 @@ spring:
         register-enabled: true
         server-addr: 127.0.0.1:8848
         namespace: liyz-cloud
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
   # datasource
   datasource:
     url: jdbc:shardingsphere:classpath:sharding.yaml
@@ -114,3 +117,13 @@ xxl:
     port: 22883
     access-token: wls123456
     log-retention-days: 15
+# management
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  endpoint:
+    health:
+      show-details: when_authorized

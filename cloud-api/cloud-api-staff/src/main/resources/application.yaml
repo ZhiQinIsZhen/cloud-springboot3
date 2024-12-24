@@ -42,6 +42,9 @@ spring:
       discovery:
         server-addr: nacos://localhost:8848
         namespace: liyz-cloud
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
 # eureka
 eureka:
   client:
@@ -82,3 +85,13 @@ gateway:
     header:
       key: AUTH_INFO
       secret: BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST
+# management
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  endpoint:
+    health:
+      show-details: when_authorized
