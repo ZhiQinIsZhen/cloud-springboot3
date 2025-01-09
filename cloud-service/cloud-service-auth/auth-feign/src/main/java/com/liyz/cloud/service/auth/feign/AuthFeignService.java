@@ -5,7 +5,6 @@ import com.liyz.cloud.common.feign.dto.auth.AuthUserDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserLoginDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserLogoutDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserRegisterDTO;
-import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.service.auth.constant.AuthConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,17 +26,17 @@ public interface AuthFeignService {
 
     @Operation(summary = "用户注册")
     @PostMapping("/register")
-    Result<Boolean> registry(@RequestBody AuthUserRegisterDTO authUserRegister);
+    void registry(@RequestBody AuthUserRegisterDTO authUserRegister);
 
     @Operation(summary = "登录")
     @PostMapping("/login")
-    Result<AuthUserBO> login(@RequestBody AuthUserLoginDTO authUserLogin);
+    AuthUserBO login(@RequestBody AuthUserLoginDTO authUserLogin);
 
     @Operation(summary = "登出")
     @PostMapping("/logout")
-    Result<Boolean> logout(@RequestBody AuthUserLogoutDTO authUserLogout);
+    Boolean logout(@RequestBody AuthUserLogoutDTO authUserLogout);
 
     @Operation(summary = "获取权限列表")
     @PostMapping("/authorities")
-    Result<List<AuthUserBO.AuthGrantedAuthorityBO>> authorities(@RequestBody AuthUserDTO authUser);
+    List<AuthUserBO.AuthGrantedAuthorityBO> authorities(@RequestBody AuthUserDTO authUser);
 }

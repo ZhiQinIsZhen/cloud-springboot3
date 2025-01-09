@@ -10,7 +10,6 @@ import com.liyz.cloud.common.feign.bo.jwt.AuthJwtBO;
 import com.liyz.cloud.common.feign.constant.Device;
 import com.liyz.cloud.common.feign.constant.LoginType;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserDTO;
-import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.common.util.DateUtil;
 import com.liyz.cloud.common.util.PatternUtil;
 import com.liyz.cloud.common.util.constant.CommonConstant;
@@ -65,7 +64,7 @@ public class JwtParseController implements JwtParseFeignService {
     private RedissonClient redissonClient;
 
     @Override
-    public Result<AuthUserBO> parseToken(String token, String clientId) {
+    public AuthUserBO parseToken(String token, String clientId) {
         AuthJwtDO authJwtDO = authJwtService.getByClientId(clientId);
         if (Objects.isNull(authJwtDO)) {
             log.error("解析token失败, 没有找到该应用下jwt配置信息，clientId：{}", clientId);
@@ -108,29 +107,24 @@ public class JwtParseController implements JwtParseFeignService {
         authUserDTO.setAuthId(Long.valueOf(claims.getId()));
         authUserDTO.setDevice(Device.getByType(claims.get(CLAIM_DEVICE, Integer.class)));
         authUserDTO.setRoleIds(roleIds);
-        Result<List<AuthUserBO.AuthGrantedAuthorityBO>> resultAuthority = staffAuthFeignService.authorities(authUserDTO);
-        if (!CommonExceptionCodeEnum.SUCCESS.getCode().equals(resultAuthority.getCode())) {
-            return Result.error(resultAuthority.getCode(), resultAuthority.getMessage());
-        }
-        return Result.success(
-                AuthUserBO.builder()
-                        .username(claims.getSubject())
-                        .password(StringUtils.EMPTY)
-                        .salt(StringUtils.EMPTY)
-                        .loginType(LoginType.getByType(PatternUtil.checkMobileEmail(claims.getSubject())))
-                        .device(Device.getByType(claims.get(CLAIM_DEVICE, Integer.class)))
-                        .authId(Long.valueOf(claims.getId()))
-                        .loginKey(audienceList.get(1))
-                        .roleIds(roleIds)
-                        .token(authToken)
-                        .clientId(claims.getAudience().stream().findFirst().orElse(StringUtils.EMPTY))
-                        .authorities(authJwtDO.getIsAuthority() ? resultAuthority.getData() : Lists.newArrayList())
-                        .build()
-        );
+        List<AuthUserBO.AuthGrantedAuthorityBO> resultAuthority = staffAuthFeignService.authorities(authUserDTO);
+        return AuthUserBO.builder()
+                .username(claims.getSubject())
+                .password(StringUtils.EMPTY)
+                .salt(StringUtils.EMPTY)
+                .loginType(LoginType.getByType(PatternUtil.checkMobileEmail(claims.getSubject())))
+                .device(Device.getByType(claims.get(CLAIM_DEVICE, Integer.class)))
+                .authId(Long.valueOf(claims.getId()))
+                .loginKey(audienceList.get(1))
+                .roleIds(roleIds)
+                .token(authToken)
+                .clientId(claims.getAudience().stream().findFirst().orElse(StringUtils.EMPTY))
+                .authorities(authJwtDO.getIsAuthority() ? resultAuthority : Lists.newArrayList())
+                .build();
     }
 
     @Override
-    public Result<AuthJwtBO> generateToken(AuthUserBO authUser) {
+    public AuthJwtBO generateToken(AuthUserBO authUser) {
         if (StringUtils.isBlank(authUser.getClientId())) {
             log.error("创建token失败，原因 : clientId is blank");
             throw new RemoteServiceException(CommonExceptionCodeEnum.LOGIN_ERROR);
@@ -140,32 +134,29 @@ public class JwtParseController implements JwtParseFeignService {
             log.error("生成token失败, 没有找到该应用下jwt配置信息，clientId : {}", authUser.getClientId());
             throw new RemoteServiceException(CommonExceptionCodeEnum.LOGIN_ERROR);
         }
-
-        return Result.success(
-                AuthJwtBO
-                        .builder()
-                        .jwtPrefix(authJwtDO.getJwtPrefix())
-                        .token(JwtUtil.builder()
-                                .id(authUser.getAuthId().toString())
-                                .subject(authUser.getUsername())
-                                .audience().add(authUser.getClientId()).add(authUser.getLoginKey()).add(authUser.getSalt()).and()
-                                .expiration(new Date(System.currentTimeMillis() + authJwtDO.getExpiration() * 1000))
-                                .claim(CLAIM_DEVICE, authUser.getDevice().getType())
-                                .claim(ROLE_LIST, authUser.getRoleIds())
-                                .signWith(
-                                        SignatureAlgorithm.forName(authJwtDO.getSignatureAlgorithm()),
-                                        Keys.hmacShaKeyFor(Decoders.BASE64.decode(Joiner
-                                                .on(CommonConstant.DEFAULT_PADDING)
-                                                .join(authJwtDO.getSigningKey(), authUser.getSalt())))
-                                )
-                                .compact())
-                        .build()
-        );
+        return AuthJwtBO
+                .builder()
+                .jwtPrefix(authJwtDO.getJwtPrefix())
+                .token(JwtUtil.builder()
+                        .id(authUser.getAuthId().toString())
+                        .subject(authUser.getUsername())
+                        .audience().add(authUser.getClientId()).add(authUser.getLoginKey()).add(authUser.getSalt()).and()
+                        .expiration(new Date(System.currentTimeMillis() + authJwtDO.getExpiration() * 1000))
+                        .claim(CLAIM_DEVICE, authUser.getDevice().getType())
+                        .claim(ROLE_LIST, authUser.getRoleIds())
+                        .signWith(
+                                SignatureAlgorithm.forName(authJwtDO.getSignatureAlgorithm()),
+                                Keys.hmacShaKeyFor(Decoders.BASE64.decode(Joiner
+                                        .on(CommonConstant.DEFAULT_PADDING)
+                                        .join(authJwtDO.getSigningKey(), authUser.getSalt())))
+                        )
+                        .compact())
+                .build();
     }
 
     @Override
-    public Result<Long> getExpiration(String token) {
-        return Result.success(this.parseClaimsJws(token).getExpiration().getTime());
+    public Long getExpiration(String token) {
+        return this.parseClaimsJws(token).getExpiration().getTime();
     }
 
     /**

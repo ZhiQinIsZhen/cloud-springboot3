@@ -1,3 +1,8 @@
+mode:
+  type: Standalone
+  repository:
+    type: JDBC
+
 databaseName: cloud_staff
 
 dataSources:
@@ -36,6 +41,10 @@ rules:
         keyGenerateStrategy:
           column: id
           keyGeneratorName: snowflake
+
+    defaultTableStrategy:
+      
+
     keyGenerators:
       snowflake:
         type: SNOWFLAKE

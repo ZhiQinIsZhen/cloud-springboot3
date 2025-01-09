@@ -74,6 +74,10 @@
         </dependency>
         <dependency>
             <groupId>com.liyz.cloud</groupId>
+            <artifactId>cloud-common-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.liyz.cloud</groupId>
             <artifactId>auth-feign</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

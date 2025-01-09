@@ -47,8 +47,8 @@ public class StaffInfoController {
     @Operation(summary = "查询当前登录员工信息")
     @GetMapping("/current")
     public Result<StaffInfoApiVO> userInfo() {
-        Result<StaffInfoVO> result = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
-        return Result.result(result, BeanUtil.copyProperties(result.getData(), StaffInfoApiVO::new));
+        StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
+        return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
     }
 
     @Operation(summary = "分页查询员工登录信息")
@@ -57,8 +57,8 @@ public class StaffInfoController {
         StaffLogPageDTO pageDTO = BeanUtil.copyProperties(page, StaffLogPageDTO::new, (s, t) -> {
             t.setStaffId(AuthContext.getAuthUser().getAuthId());
         });
-        Result<RemotePage<StaffLoginLogVO>> pageResult = staffInfoFeignService.loginPage(pageDTO);
-        return PageResult.result(pageResult, pageResult.getData());
+        RemotePage<StaffLoginLogVO> remotePage = staffInfoFeignService.loginPage(pageDTO);
+        return PageResult.success(remotePage);
     }
 
     @Operation(summary = "分页查询员工登出信息")
@@ -67,21 +67,21 @@ public class StaffInfoController {
         StaffLogPageDTO pageDTO = BeanUtil.copyProperties(page, StaffLogPageDTO::new, (s, t) -> {
             t.setStaffId(AuthContext.getAuthUser().getAuthId());
         });
-        Result<RemotePage<StaffLogoutLogVO>> pageResult = staffInfoFeignService.logoutPage(pageDTO);
-        return PageResult.result(pageResult, pageResult.getData());
+        RemotePage<StaffLogoutLogVO> remotePage = staffInfoFeignService.logoutPage(pageDTO);
+        return PageResult.success(remotePage);
     }
 
     @Operation(summary = "通过staffId查询员工信息")
     @GetMapping("/getByStaffId")
     public Result<StaffInfoApiVO> getByStaffId(@RequestParam("staffId") Long staffId) {
-        Result<StaffInfoVO> result = staffInfoFeignService.getByStaffId(staffId);
-        return Result.result(result, BeanUtil.copyProperties(result.getData(), StaffInfoApiVO::new));
+        StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(staffId);
+        return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
     }
 
     @Operation(summary = "分页查询员工信息")
     @GetMapping("/page")
     public PageResult<StaffInfoApiVO> page(PageDTO page) {
-        Result<RemotePage<StaffInfoVO>> pageResult = staffInfoFeignService.page(page);
-        return PageResult.result(pageResult, BeanUtil.copyRemotePage(pageResult.getData(), StaffInfoApiVO::new));
+        RemotePage<StaffInfoVO> remotePage = staffInfoFeignService.page(page);
+        return PageResult.success(BeanUtil.copyRemotePage(remotePage, StaffInfoApiVO::new));
     }
 }

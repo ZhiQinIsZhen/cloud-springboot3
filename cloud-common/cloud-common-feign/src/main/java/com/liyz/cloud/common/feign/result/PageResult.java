@@ -11,7 +11,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * Desc:
+ * Desc:分页包装体
  *
  * @author lyz
  * @version 1.0.0
@@ -73,13 +73,6 @@ public class PageResult<T> {
 
     public static <T> PageResult<T> error(IExceptionService codeEnum) {
         return new PageResult<>(codeEnum);
-    }
-
-    public static <T, E> PageResult<T> result(Result<RemotePage<E>> result, RemotePage<T> data) {
-        if (CommonExceptionCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
-            return success(data);
-        }
-        return error(result.getCode(), result.getMessage());
     }
 
     public void setPageNum(long pageNum) {

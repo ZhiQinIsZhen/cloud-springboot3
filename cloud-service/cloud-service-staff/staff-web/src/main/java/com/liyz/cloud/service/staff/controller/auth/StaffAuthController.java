@@ -5,7 +5,6 @@ import com.liyz.cloud.common.feign.dto.auth.AuthUserDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserLoginDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserLogoutDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserRegisterDTO;
-import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.service.staff.biz.FeignAuthBiz;
 import com.liyz.cloud.service.staff.constants.StaffConstants;
 import com.liyz.cloud.service.staff.feign.StaffAuthFeignService;
@@ -33,22 +32,22 @@ public class StaffAuthController implements StaffAuthFeignService {
 
 
     @Override
-    public Result<Boolean> registry(AuthUserRegisterDTO authUserRegister) {
-        return Result.success(feignAuthBiz.registry(authUserRegister));
+    public void registry(AuthUserRegisterDTO authUserRegister) {
+        feignAuthBiz.registry(authUserRegister);
     }
 
     @Override
-    public Result<AuthUserBO> login(AuthUserLoginDTO authUserLogin) {
-        return Result.success(feignAuthBiz.login(authUserLogin));
+    public AuthUserBO login(AuthUserLoginDTO authUserLogin) {
+        return feignAuthBiz.login(authUserLogin);
     }
 
     @Override
-    public Result<Boolean> logout(AuthUserLogoutDTO authUserLogout) {
-        return Result.success(feignAuthBiz.logout(authUserLogout));
+    public Boolean logout(AuthUserLogoutDTO authUserLogout) {
+        return feignAuthBiz.logout(authUserLogout);
     }
 
     @Override
-    public Result<List<AuthUserBO.AuthGrantedAuthorityBO>> authorities(AuthUserDTO authUser) {
-        return Result.success(feignAuthBiz.authorities(authUser));
+    public List<AuthUserBO.AuthGrantedAuthorityBO> authorities(AuthUserDTO authUser) {
+        return feignAuthBiz.authorities(authUser);
     }
 }

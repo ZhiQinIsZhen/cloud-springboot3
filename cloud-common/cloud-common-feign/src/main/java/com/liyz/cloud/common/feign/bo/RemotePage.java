@@ -53,8 +53,12 @@ public class RemotePage<T> implements Serializable {
         this.pageSize = Math.max(1L, pageSize);
     }
 
+    public long getPageSize() {
+        return Math.max(1L, pageSize);
+    }
+
     public long getPages() {
-        return this.total % this.pageSize == 0 ? this.total / this.pageSize : this.total / this.pageSize + 1;
+        return this.total % this.getPageSize() == 0 ? this.total / this.getPageSize() : this.total / this.getPageSize() + 1;
     }
 
     public boolean isHasNextPage() {

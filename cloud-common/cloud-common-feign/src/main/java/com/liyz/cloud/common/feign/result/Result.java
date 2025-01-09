@@ -61,11 +61,4 @@ public class Result<T> {
     public static <E> Result<E> error(String code, String message) {
         return new Result<>(code, message);
     }
-
-    public static <E, T> Result<E> result(Result<T> result, E data) {
-        if (CommonExceptionCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
-            return success(data);
-        }
-        return error(result.getCode(), result.getMessage());
-    }
 }

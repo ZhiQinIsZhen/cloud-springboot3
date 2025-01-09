@@ -16,6 +16,7 @@ public enum CommonExceptionCodeEnum implements IExceptionService{
     NOT_FOUND("404", "NOT_FOUND"),
 
     PARAMS_VALIDATED("10000", "参数校验失败"),
+    DATA_NOT_EXIST("10001", "数据不存在"),
     REMOTE_SERVICE_FAIL("10005", "服务异常"),
     OUT_LIMIT_COUNT("10006", "访问频率过快"),
     NON_NO_ARGS_CONSTRUCTOR("10007", "没有无参构造方法"),

@@ -8,7 +8,6 @@ import com.liyz.cloud.common.feign.dto.auth.AuthUserDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserLoginDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserLogoutDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserRegisterDTO;
-import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.common.util.RandomUtil;
 import com.liyz.cloud.service.auth.feign.AuthFeignService;
 import com.liyz.cloud.service.auth.model.AuthJwtDO;
@@ -60,7 +59,7 @@ public class AuthController implements AuthFeignService {
 
 
     @Override
-    public Result<Boolean> registry(AuthUserRegisterDTO authUserRegister) {
+    public void registry(AuthUserRegisterDTO authUserRegister) {
         if (StringUtils.isBlank(authUserRegister.getClientId())) {
             throw new RemoteServiceException(CommonExceptionCodeEnum.LACK_SOURCE_ID);
         }
@@ -70,11 +69,11 @@ public class AuthController implements AuthFeignService {
         }
         authUserRegister.setPassword(passwordEncoder.encode(authUserRegister.getPassword()));
         authUserRegister.setSalt(RandomUtil.randomChars(16));
-        return staffAuthFeignService.registry(authUserRegister);
+        staffAuthFeignService.registry(authUserRegister);
     }
 
     @Override
-    public Result<AuthUserBO> login(AuthUserLoginDTO authUserLogin) {
+    public AuthUserBO login(AuthUserLoginDTO authUserLogin) {
         final String clientId = authUserLogin.getClientId();
         if (StringUtils.isBlank(clientId)) {
             log.warn("用户登录错误，原因 : clientId is blank");
@@ -90,28 +89,26 @@ public class AuthController implements AuthFeignService {
             log.error("解析token失败, 没有找到该应用下jwt配置信息，clientId：{}", clientId);
             throw new RemoteServiceException(CommonExceptionCodeEnum.AUTHORIZATION_FAIL);
         }
-        Result<AuthUserBO> result = staffAuthFeignService.login(authUserLogin);
-        if (CommonExceptionCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
-            String loginKey = RandomUtil.randomChars(32);
-            RSet<String> set = redissonClient.getSet(RedisUtil.getRedisKey(clientId, result.getData().getAuthId().toString()));
-            if (set.isExists() && authJwtDO.getOneOnline()) {
-                set.clear();
-            }
-            set.add(loginKey);
-            set.expire(Duration.of(7, ChronoUnit.DAYS));
-            result.getData().setLoginKey(loginKey);
+        AuthUserBO authUserBO = staffAuthFeignService.login(authUserLogin);
+        String loginKey = RandomUtil.randomChars(32);
+        RSet<String> set = redissonClient.getSet(RedisUtil.getRedisKey(clientId, authUserBO.getAuthId().toString()));
+        if (set.isExists() && authJwtDO.getOneOnline()) {
+            set.clear();
         }
-        return result;
+        set.add(loginKey);
+        set.expire(Duration.of(7, ChronoUnit.DAYS));
+        authUserBO.setLoginKey(loginKey);
+        return authUserBO;
     }
 
     @Override
-    public Result<Boolean> logout(AuthUserLogoutDTO authUserLogout) {
+    public Boolean logout(AuthUserLogoutDTO authUserLogout) {
         if (StringUtils.isBlank(authUserLogout.getClientId())) {
-            return Result.success(Boolean.FALSE);
+            return Boolean.FALSE;
         }
         AuthSourceDO authSourceDO = authSourceService.getByClientId(authUserLogout.getClientId());
         if (Objects.isNull(authSourceDO)) {
-            return Result.success(Boolean.FALSE);
+            return Boolean.FALSE;
         }
         RSet<String> set = redissonClient.getSet(RedisUtil.getRedisKey(authSourceDO.getClientId(), authUserLogout.getAuthId().toString()));
         if (set.isExists()) {
@@ -121,14 +118,14 @@ public class AuthController implements AuthFeignService {
     }
 
     @Override
-    public Result<List<AuthUserBO.AuthGrantedAuthorityBO>> authorities(AuthUserDTO authUser) {
+    public List<AuthUserBO.AuthGrantedAuthorityBO> authorities(AuthUserDTO authUser) {
         if (StringUtils.isBlank(authUser.getClientId())) {
             log.warn("获取权限错误，原因 : client is blank");
-            return Result.success(new ArrayList<>());
+            return new ArrayList<>();
         }
         AuthSourceDO authSourceDO = authSourceService.getByClientId(authUser.getClientId());
         if (Objects.isNull(authSourceDO)) {
-            return Result.success(new ArrayList<>());
+            return new ArrayList<>();
         }
         return staffAuthFeignService.authorities(authUser);
     }

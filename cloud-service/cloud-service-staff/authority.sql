@@ -12,10 +12,9 @@ CREATE TABLE `staff_role` (
      UNIQUE KEY `uniq_staff_id_role_id` (`staff_id`,`role_id`) USING BTREE
 ) ENGINE=InnoDB COMMENT='员工角色表';
 
-INSERT INTO `cloud_staff`.`system_role`
+INSERT INTO `cloud_staff`.`staff_role`
 VALUES
-(1, '客服', NULL, 1, 1, now(), now(), 0, 0);
-
+    (1, 2, 1, 0, 0, now(), now(), 0, 0);
 
 CREATE TABLE `system_role` (
    `role_id` int(8) unsigned NOT NULL COMMENT '角色ID',
@@ -30,9 +29,9 @@ CREATE TABLE `system_role` (
    PRIMARY KEY (`role_id`) USING BTREE
 ) ENGINE=InnoDB COMMENT='系统角色表';
 
-INSERT INTO `cloud_staff`.`staff_role`
+INSERT INTO `cloud_staff`.`system_role`
 VALUES
-(1, 2, 1, 0, 0, now(), now(), 0, 0);
+    (1, '客服', NULL, 1, 1, now(), now(), 0, 0);
 
 
 CREATE TABLE `system_authority` (
@@ -69,6 +68,10 @@ CREATE TABLE `system_role_authority` (
      UNIQUE KEY `uniq_role_id_authority_id` (`role_id`,`authority_id`) USING BTREE
 ) ENGINE=InnoDB COMMENT='系统角色权限表';
 
+INSERT INTO `cloud_staff`.`system_role_authority`
+VALUES
+    (1, 1, 1, 1, 1, now(), now(), 0, 0);
+
 CREATE TABLE `staff_authority` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `staff_id` bigint(20) unsigned NOT NULL COMMENT '员工ID',
@@ -83,7 +86,3 @@ CREATE TABLE `staff_authority` (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `uniq_staff_id_authority_id` (`staff_id`,`authority_id`) USING BTREE
 ) ENGINE=InnoDB COMMENT='员工权限表';
-
-INSERT INTO `cloud_staff`.`system_role_authority`
-VALUES
-(1, 1, 1, 1, 1, now(), now(), 0, 0);

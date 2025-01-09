@@ -3,9 +3,10 @@ package com.liyz.cloud.service.staff.controller.info;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liyz.cloud.common.base.util.BeanUtil;
+import com.liyz.cloud.common.exception.CommonExceptionCodeEnum;
+import com.liyz.cloud.common.exception.RemoteServiceException;
 import com.liyz.cloud.common.feign.bo.RemotePage;
 import com.liyz.cloud.common.feign.dto.PageDTO;
-import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.service.staff.constants.StaffConstants;
 import com.liyz.cloud.service.staff.dto.log.StaffLogPageDTO;
 import com.liyz.cloud.service.staff.feign.StaffInfoFeignService;
@@ -22,6 +23,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 /**
  * Desc:
@@ -44,47 +47,48 @@ public class StaffInfoController implements StaffInfoFeignService {
 
 
     @Override
-    public Result<StaffInfoVO> getByStaffId(Long staffId) {
-        return Result.success(BeanUtil.copyProperties(staffInfoService.getById(staffId), StaffInfoVO::new));
+    public StaffInfoVO getByStaffId(Long staffId) {
+        StaffInfoDO staffInfoDO = staffInfoService.getById(staffId);
+        if (Objects.isNull(staffInfoDO)) {
+            throw new RemoteServiceException(CommonExceptionCodeEnum.DATA_NOT_EXIST);
+        }
+        return BeanUtil.copyProperties(staffInfoDO, StaffInfoVO::new);
     }
 
     @Override
-    public Result<RemotePage<StaffInfoVO>> page(PageDTO pageDTO) {
+    public RemotePage<StaffInfoVO> page(PageDTO pageDTO) {
         Page<StaffInfoDO> page = staffInfoService.page(Page.of(pageDTO.getPageNum(), pageDTO.getPageSize()));
-        RemotePage<StaffInfoVO> remotePage = RemotePage.of(
+        return RemotePage.of(
                 BeanUtil.copyList(page.getRecords(), StaffInfoVO::new),
                 page.getTotal(),
                 pageDTO.getPageNum(),
                 pageDTO.getPageSize()
         );
-        return Result.success(remotePage);
     }
 
     @Override
-    public Result<RemotePage<StaffLoginLogVO>> loginPage(StaffLogPageDTO pageDTO) {
+    public RemotePage<StaffLoginLogVO> loginPage(StaffLogPageDTO pageDTO) {
         Page<StaffLoginLogDO> page = staffLoginLogService.page(Page.of(pageDTO.getPageNum(), pageDTO.getPageSize()),
                 Wrappers.lambdaQuery(StaffLoginLogDO.builder().staffId(pageDTO.getStaffId()).build())
                         .orderByDesc(StaffLoginLogDO::getId));
-        RemotePage<StaffLoginLogVO> remotePage = RemotePage.of(
+        return RemotePage.of(
                 BeanUtil.copyList(page.getRecords(), StaffLoginLogVO::new),
                 page.getTotal(),
                 pageDTO.getPageNum(),
                 pageDTO.getPageSize()
         );
-        return Result.success(remotePage);
     }
 
     @Override
-    public Result<RemotePage<StaffLogoutLogVO>> logoutPage(StaffLogPageDTO pageDTO) {
+    public RemotePage<StaffLogoutLogVO> logoutPage(StaffLogPageDTO pageDTO) {
         Page<StaffLogoutLogDO> page = staffLogoutLogService.page(Page.of(pageDTO.getPageNum(), pageDTO.getPageSize()),
                 Wrappers.lambdaQuery(StaffLogoutLogDO.builder().staffId(pageDTO.getStaffId()).build())
                         .orderByDesc(StaffLogoutLogDO::getId));
-        RemotePage<StaffLogoutLogVO> remotePage = RemotePage.of(
+        return RemotePage.of(
                 BeanUtil.copyList(page.getRecords(), StaffLogoutLogVO::new),
                 page.getTotal(),
                 pageDTO.getPageNum(),
                 pageDTO.getPageSize()
         );
-        return Result.success(remotePage);
     }
 }

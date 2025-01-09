@@ -3,7 +3,6 @@ package com.liyz.cloud.gateway.filter;
 import com.liyz.cloud.common.exception.CommonExceptionCodeEnum;
 import com.liyz.cloud.common.exception.RemoteServiceException;
 import com.liyz.cloud.common.feign.bo.auth.AuthUserBO;
-import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.gateway.constant.GatewayConstant;
 import com.liyz.cloud.gateway.properties.AnonymousMappingProperties;
 import com.liyz.cloud.gateway.util.ResponseUtil;
@@ -81,11 +80,8 @@ public class GlobalJWTFilter implements GlobalFilter, GatewayConstant, Ordered {
             return ResponseUtil.response(response, CommonExceptionCodeEnum.AUTHORIZATION_FAIL);
         }
         try {
-            Result<AuthUserBO> result = jwtParseFeignService.parseToken(jwt, clientId);
-            if (!CommonExceptionCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
-                return ResponseUtil.response(response, result.getCode(), result.getMessage());
-            }
-            exchange.getAttributes().put(GatewayConstant.AUTH_INFO, result.getData());
+            AuthUserBO authUserBO = jwtParseFeignService.parseToken(jwt, clientId);
+            exchange.getAttributes().put(GatewayConstant.AUTH_INFO, authUserBO);
         } catch (RemoteServiceException e) {
             return ResponseUtil.response(response, e.getCode(), e.getMessage());
         } catch (Exception e) {

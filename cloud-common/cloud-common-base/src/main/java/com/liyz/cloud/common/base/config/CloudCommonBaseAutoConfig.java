@@ -8,11 +8,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.liyz.cloud.common.base.advice.GlobalControllerExceptionAdvice;
+import com.liyz.cloud.common.base.advice.ResultFeignDecoderAdvice;
+import com.liyz.cloud.common.base.advice.ResultResponseBodyAdvice;
 import com.liyz.cloud.common.base.error.ErrorApiController;
 import com.liyz.cloud.common.util.DateUtil;
 import com.liyz.cloud.common.util.deserializer.DesensitizationSerializer;
 import com.liyz.cloud.common.util.deserializer.TrimDeserializer;
 import com.liyz.cloud.common.util.serializer.DoubleSerializer;
+import feign.Feign;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -44,8 +47,23 @@ public class CloudCommonBaseAutoConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public ResultResponseBodyAdvice resultResponseBodyAdvice() {
+        return new ResultResponseBodyAdvice();
+    }
+
+    @Bean
     public ErrorApiController errorApiController(ServerProperties serverProperties) {
         return new ErrorApiController(serverProperties);
+    }
+
+    @Bean
+    public ResultFeignDecoderAdvice resultFeignDecoderAdvice(ObjectMapper objectMapper) {
+        return new ResultFeignDecoderAdvice(objectMapper);
+    }
+
+    @Bean
+    public Feign.Builder decodeVoidFeignBuilder() {
+        return Feign.builder().decodeVoid();
     }
 
     /**
