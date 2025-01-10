@@ -13,6 +13,7 @@ import com.liyz.cloud.common.feign.dto.auth.AuthUserLogoutDTO;
 import com.liyz.cloud.common.feign.dto.auth.AuthUserRegisterDTO;
 import com.liyz.cloud.common.util.DateUtil;
 import com.liyz.cloud.common.util.PatternUtil;
+import com.liyz.cloud.common.util.VirtualThreadUtil;
 import com.liyz.cloud.service.staff.model.*;
 import com.liyz.cloud.service.staff.model.base.StaffAuthBaseDO;
 import com.liyz.cloud.service.staff.service.*;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -66,20 +68,7 @@ public class FeignAuthBiz {
      */
     @Transactional(rollbackFor = Exception.class)
     public Boolean registry(AuthUserRegisterDTO authUserRegister) {
-        boolean isEmail = PatternUtil.matchEmail(authUserRegister.getUsername());
-        //判断该用户名是否存在
-        boolean userNameExist = isEmail ?
-                staffAuthEmailService.lambdaQuery().eq(StaffAuthEmailDO::getEmail, authUserRegister.getUsername()).exists() :
-                staffAuthMobileService.lambdaQuery().eq(StaffAuthMobileDO::getMobile, authUserRegister.getUsername()).exists();
-        if (userNameExist) {
-            throw new RemoteServiceException(isEmail ? CommonExceptionCodeEnum.EMAIL_EXIST : CommonExceptionCodeEnum.MOBILE_EXIST);
-        }
         StaffInfoDO staffInfoDO = BeanUtil.copyProperties(authUserRegister, StaffInfoDO::new, (s, t) -> {
-            if (isEmail) {
-                t.setEmail(authUserRegister.getUsername());
-            } else {
-                t.setMobile(authUserRegister.getUsername());
-            }
             t.setRegistryTime(DateUtil.date());
         });
         staffInfoService.save(staffInfoDO);
@@ -87,13 +76,21 @@ public class FeignAuthBiz {
             StaffAuthMobileDO mobileDO = StaffAuthMobileDO.builder().mobile(staffInfoDO.getMobile()).build();
             mobileDO.setStaffId(staffInfoDO.getStaffId());
             mobileDO.setPassword(authUserRegister.getPassword());
-            staffAuthMobileService.save(mobileDO);
+            try {
+                staffAuthMobileService.save(mobileDO);
+            } catch (DuplicateKeyException e) {
+                throw new RemoteServiceException(CommonExceptionCodeEnum.MOBILE_EXIST);
+            }
         }
         if (StringUtils.isNotBlank(staffInfoDO.getEmail())) {
             StaffAuthEmailDO emailDO = StaffAuthEmailDO.builder().email(staffInfoDO.getEmail()).build();
             emailDO.setStaffId(staffInfoDO.getStaffId());
             emailDO.setPassword(authUserRegister.getPassword());
-            staffAuthEmailService.save(emailDO);
+            try {
+                staffAuthEmailService.save(emailDO);
+            } catch (DuplicateKeyException e) {
+                throw new RemoteServiceException(CommonExceptionCodeEnum.EMAIL_EXIST);
+            }
         }
         return Boolean.TRUE;
     }
@@ -164,21 +161,24 @@ public class FeignAuthBiz {
     @Cacheable(cacheNames = {"auth"}, key = "'authorities:' + #p0.authId", unless = "#result == null")
     public List<AuthUserBO.AuthGrantedAuthorityBO> authorities(AuthUserDTO authUser) {
         Set<Integer> authorityIdSet = new HashSet<>();
-        //查询角色拥有的权限
-        if (!CollectionUtils.isEmpty(authUser.getRoleIds())) {
-            List<SystemRoleAuthorityDO> roleAuthorityList = systemRoleAuthorityService.list(Wrappers.lambdaQuery(SystemRoleAuthorityDO.class)
-                    .in(SystemRoleAuthorityDO::getRoleId, authUser.getRoleIds()));
-            if (!CollectionUtils.isEmpty(roleAuthorityList)) {
-                roleAuthorityList.forEach(item -> authorityIdSet.add(item.getAuthorityId()));
+        VirtualThreadUtil.submit(() -> {
+            //查询角色拥有的权限
+            if (!CollectionUtils.isEmpty(authUser.getRoleIds())) {
+                List<SystemRoleAuthorityDO> roleAuthorityList = systemRoleAuthorityService.list(Wrappers.lambdaQuery(SystemRoleAuthorityDO.class)
+                        .in(SystemRoleAuthorityDO::getRoleId, authUser.getRoleIds()));
+                if (!CollectionUtils.isEmpty(roleAuthorityList)) {
+                    roleAuthorityList.forEach(item -> authorityIdSet.add(item.getAuthorityId()));
+                }
             }
-        }
-        //查询临时权限
-        List<StaffAuthorityDO> list = staffAuthorityService.list(Wrappers.lambdaQuery(StaffAuthorityDO.class)
-                .eq(StaffAuthorityDO::getStaffId, authUser.getAuthId())
-                .le(StaffAuthorityDO::getAuthorityEndTime, DateUtil.date()));
-        if (!CollectionUtils.isEmpty(list)) {
-            list.forEach(item -> authorityIdSet.add(item.getAuthorityId()));
-        }
+        }, () -> {
+            //查询临时权限
+            List<StaffAuthorityDO> list = staffAuthorityService.list(Wrappers.lambdaQuery(StaffAuthorityDO.class)
+                    .eq(StaffAuthorityDO::getStaffId, authUser.getAuthId())
+                    .le(StaffAuthorityDO::getAuthorityEndTime, DateUtil.date()));
+            if (!CollectionUtils.isEmpty(list)) {
+                list.forEach(item -> authorityIdSet.add(item.getAuthorityId()));
+            }
+        });
         if (CollectionUtils.isEmpty(authorityIdSet)) {
             return new ArrayList<>();
         }

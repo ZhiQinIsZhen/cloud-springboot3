@@ -1,5 +1,6 @@
 package com.liyz.cloud.common.feign.dto.auth;
 
+import com.liyz.cloud.common.feign.validation.AnyNotBlank;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -22,11 +23,16 @@ public class AuthUserRegisterDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "用户名")
-    @NotBlank(groups = {Register.class}, message = "请输入用户昵称")
-    private String username;
+    @Schema(description = "用户手机号码")
+    @AnyNotBlank(groups = {Register.class}, fields = {"mobile", "email"}, message = "请输入注册的手机号码或邮箱地址")
+    private String mobile;
+
+    @Schema(description = "用户邮箱地址")
+    @AnyNotBlank(groups = {Register.class}, fields = {"mobile", "email"}, message = "请输入注册的手机号码或邮箱地址")
+    private String email;
 
     @Schema(description = "密码")
+    @NotBlank(groups = {Register.class}, message = "请输入8到20位数字和字母组合")
     @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$", groups = {Register.class}, message = "请输入8到20位数字和字母组合")
     private String password;
 
