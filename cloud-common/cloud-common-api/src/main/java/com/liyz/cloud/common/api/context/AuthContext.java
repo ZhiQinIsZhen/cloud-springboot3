@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * Desc:
+ * Desc:认证上下文
  *
  * @author lyz
  * @version 1.0.0
@@ -114,12 +114,7 @@ public class AuthContext implements EnvironmentAware, ApplicationContextAware, I
                 s.setLoginKey(null);
                 t.setToken(authJwtBO.getToken());
             });
-            CookieUtil.addCookie(
-                    SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY,
-                    authJwtBO.getJwtPrefix() + authUserBO.getToken(),
-                    30 * 60,
-                    null
-            );
+            CookieUtil.addCookie(SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, authJwtBO.getJwtPrefix() + authUserBO.getToken());
             if (StringUtils.isNotBlank(authUserLoginDTO.getRedirect())) {
                 HttpServletResponse response = HttpServletContext.getResponse();
                 response.setHeader(SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, authUserBO.getToken());

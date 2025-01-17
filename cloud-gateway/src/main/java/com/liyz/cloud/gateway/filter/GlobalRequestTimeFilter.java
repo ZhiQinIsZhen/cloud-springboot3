@@ -1,0 +1,44 @@
+package com.liyz.cloud.gateway.filter;
+
+import com.liyz.cloud.gateway.constant.GatewayConstant;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.Objects;
+
+/**
+ * Desc:
+ *
+ * @author lyz
+ * @version 1.0.0
+ * @date 2024/1/30 10:27
+ */
+@Slf4j
+@Component
+public class GlobalRequestTimeFilter implements GlobalFilter, Ordered {
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        exchange.getAttributes().put(GatewayConstant.GATEWAY_REQUEST_BEGIN_TIME, System.currentTimeMillis());
+        return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+            Long beginTime = exchange.getAttribute(GatewayConstant.GATEWAY_REQUEST_BEGIN_TIME);
+            if (Objects.nonNull(beginTime)) {
+                log.info("method : {}, url : {}, time : {}ms",
+                        exchange.getRequest().getMethod().name(),
+                        exchange.getRequest().getURI().getRawPath(),
+                        System.currentTimeMillis() - beginTime
+                );
+            }
+        }));
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE + 999;
+    }
+}

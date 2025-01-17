@@ -38,4 +38,6 @@ public interface SecurityClientConstant {
     String AUTH_MANAGER_BEAN_NAME = "authenticationManager";
 
     String CLIENT_ID = "spring.application.name";
+
+    Integer DEFAULT_SESSION_TIMEOUT = 30 * 60;
 }

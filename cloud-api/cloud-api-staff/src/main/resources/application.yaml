@@ -3,6 +3,13 @@ server:
   port: 7071
   servlet:
     context-path: /staff
+    session:
+      cookie:
+        domain: 127.0.0.1
+        http-only: true
+        max-age: 30m
+        secure: false
+        path: ${server.servlet.context-path}
   tomcat:
     accept-count: 10
     threads:

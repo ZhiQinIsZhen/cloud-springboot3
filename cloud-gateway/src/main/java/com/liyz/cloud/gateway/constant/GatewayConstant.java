@@ -30,6 +30,11 @@ public interface GatewayConstant {
     String AUTH_INFO = "AUTH_INFO";
 
     /**
+     * 请求开始时间
+     */
+    String GATEWAY_REQUEST_BEGIN_TIME = "gatewayRequestBeginTime";
+
+    /**
      * 是否匹配到目标路劲
      *
      * @param path 路劲

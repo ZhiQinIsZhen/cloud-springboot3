@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Desc:
+ * Desc:设备上下文
  *
  * @author lyz
  * @version 1.0.0

@@ -11,6 +11,7 @@ import com.liyz.cloud.common.exception.RemoteServiceException;
 import com.liyz.cloud.common.feign.bo.auth.AuthUserBO;
 import com.liyz.cloud.common.feign.result.Result;
 import com.liyz.cloud.common.util.CryptoUtil;
+import com.liyz.cloud.common.util.DateUtil;
 import com.liyz.cloud.common.util.JsonUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,7 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * Desc:
+ * Desc:jwt认证过滤器
  *
  * @author lyz
  * @version 1.0.0
@@ -115,14 +116,13 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 token = URLDecoder.decode(token, String.valueOf(Charsets.UTF_8));
             }
         }
-        if (StringUtils.isNotBlank(token)) {
-            AuthUserBO authUserBO = AuthContext.JwtService.parseToken(token);
-            //cookie续期
-            if (Objects.nonNull(cookie)) {
-                CookieUtil.addCookie(response, SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, token, 30 * 60, null);
+        //cookie续期
+        if (Objects.nonNull(cookie)) {
+            Cookie extraCookie = CookieUtil.getCookie(SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY + CookieUtil.COOKIE_START_SUFFIX);
+            if (Objects.isNull(extraCookie) || (CookieUtil.getMaxAge()/2* 1000L) <= (DateUtil.current() - Long.parseLong(extraCookie.getValue()))) {
+                CookieUtil.addCookie(response, SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, token);
             }
-            return authUserBO;
         }
-        return null;
+        return StringUtils.isNotBlank(token) ? null : AuthContext.JwtService.parseToken(token);
     }
 }

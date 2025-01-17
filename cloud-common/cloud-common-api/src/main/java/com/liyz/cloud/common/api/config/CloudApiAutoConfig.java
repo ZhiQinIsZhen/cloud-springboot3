@@ -7,6 +7,7 @@ import com.liyz.cloud.common.api.handler.JwtAuthenticationEntryPoint;
 import com.liyz.cloud.common.api.handler.RestfulAccessDeniedHandler;
 import com.liyz.cloud.common.api.properties.GatewayAuthHeaderProperties;
 import com.liyz.cloud.common.api.user.UserDetailsServiceImpl;
+import com.liyz.cloud.common.api.util.CookieUtil;
 import jakarta.annotation.Resource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,6 +51,11 @@ public class CloudApiAutoConfig {
     @Bean
     public AuthContext authContext() {
         return new AuthContext();
+    }
+
+    @Bean
+    public CookieUtil cookieUtil() {
+        return new CookieUtil();
     }
 
     @Bean

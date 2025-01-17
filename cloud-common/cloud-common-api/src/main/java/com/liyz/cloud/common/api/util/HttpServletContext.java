@@ -8,7 +8,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
- * Desc:
+ * Desc:httpServlet上下文工具类
  *
  * @author lyz
  * @version 1.0.0
