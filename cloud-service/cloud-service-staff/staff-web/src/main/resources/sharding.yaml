@@ -62,4 +62,4 @@ rules:
           algorithm-expression: staff_logout_log_$->{staff_id % 2}
 
 props:
-  sql-show: true
+  sql-show: false

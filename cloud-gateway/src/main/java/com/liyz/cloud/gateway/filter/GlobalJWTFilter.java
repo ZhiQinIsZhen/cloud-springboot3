@@ -61,7 +61,7 @@ public class GlobalJWTFilter implements GlobalFilter, GatewayConstant, Ordered {
         ServerHttpResponse response = exchange.getResponse();
         Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         if (route == null) {
-            return ResponseUtil.response(response, "404", "NOT_FOUND");
+            return ResponseUtil.response(response, CommonExceptionCodeEnum.NOT_FOUND);
         }
         String path = request.getURI().getPath();
         String clientId = route.getId();

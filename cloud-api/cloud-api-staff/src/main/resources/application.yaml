@@ -55,6 +55,7 @@ eureka:
 # log
 logging:
   pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
   file:
     name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'
 # springdoc

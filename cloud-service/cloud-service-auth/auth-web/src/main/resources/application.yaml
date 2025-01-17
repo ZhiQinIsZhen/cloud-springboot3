@@ -81,6 +81,8 @@ logging:
     name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'
   level:
     com.liyz.cloud.service.auth.dao: debug
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
 # springdoc
 springdoc:
   default-flat-param-object: true

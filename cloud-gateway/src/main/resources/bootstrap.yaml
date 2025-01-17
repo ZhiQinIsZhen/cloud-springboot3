@@ -80,6 +80,8 @@ authority:
 logging:
   file:
     name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
 # management
 management:
   endpoints:
