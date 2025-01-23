@@ -18,7 +18,8 @@ CREATE TABLE `auth_source`  (
 -- ----------------------------
 INSERT INTO `auth_source` VALUES
 (1, 'cloud-api-staff', 'staff', -1, -1, now(), now(), 0, 0),
-(2, 'cloud-api-user', 'user', -1, -1, now(), now(), 0, 0);
+(2, 'cloud-api-user', 'user', -1, -1, now(), now(), 0, 0),
+(3, 'cloud-api-monitor', 'staff', -1, -1, now(), now(), 0, 0);
 
 CREATE TABLE `auth_jwt` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -39,7 +40,8 @@ CREATE TABLE `auth_jwt` (
     UNIQUE KEY `uniq_client_id` (`client_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证服务jwt信息配置表';
 
-INSERT INTO `auth`.`auth_jwt` VALUES
+INSERT INTO `auth_jwt` VALUES
 (1, 'cloud-api-staff', 'Bearer ', 'Bonnie', 604800, 'HS512', 1, 1, -1, -1, now(), now(), 0, 0),
 (2, 'cloud-api-user', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0),
-(3, 'cloud-service-auth', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0);
+(3, 'cloud-service-auth', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0),
+(4, 'cloud-api-monitor', 'Bearer ', 'Bonnie', 604800, 'HS512', 0, 1, -1, -1, now(), now(), 0, 0);
