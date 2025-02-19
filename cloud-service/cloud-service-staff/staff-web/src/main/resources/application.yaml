@@ -113,7 +113,7 @@ knife4j:
 xxl:
   job:
     enable: true
-    admin-address: http://xxljob.liyz.com/xxl-job-admin
+    admin-address: http://127.0.0.1:7080/xxl-job-admin
     app-name: staff-service
     log-path: '\srv\job\logs\${spring.application.name}'
     port: 22883
