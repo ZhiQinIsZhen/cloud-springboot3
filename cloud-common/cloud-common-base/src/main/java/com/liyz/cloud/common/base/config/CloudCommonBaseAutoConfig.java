@@ -76,6 +76,7 @@ public class CloudCommonBaseAutoConfig implements WebMvcConfigurer {
         if (CollectionUtils.isEmpty(converters)) {
             return;
         }
+        //处理json转换器
         Optional<HttpMessageConverter<?>> optional = converters
                 .stream()
                 .filter(item -> item instanceof MappingJackson2HttpMessageConverter)
