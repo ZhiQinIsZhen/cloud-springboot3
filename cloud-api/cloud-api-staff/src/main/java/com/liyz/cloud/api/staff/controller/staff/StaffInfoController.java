@@ -2,6 +2,7 @@ package com.liyz.cloud.api.staff.controller.staff;
 
 import com.liyz.cloud.api.staff.vo.staff.StaffInfoApiVO;
 import com.liyz.cloud.common.api.context.AuthContext;
+import com.liyz.cloud.common.base.annotation.ApiVersion;
 import com.liyz.cloud.common.base.util.BeanUtil;
 import com.liyz.cloud.common.feign.bo.RemotePage;
 import com.liyz.cloud.common.feign.dto.PageDTO;
@@ -47,6 +48,25 @@ public class StaffInfoController {
     @Operation(summary = "查询当前登录员工信息")
     @GetMapping("/current")
     public Result<StaffInfoApiVO> userInfo() {
+        log.info("查询当前登录员工信息 v1");
+        StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
+        return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
+    }
+
+    @ApiVersion("1.0.1")
+    @Operation(summary = "查询当前登录员工信息")
+    @GetMapping("/current")
+    public Result<StaffInfoApiVO> userInfoV2() {
+        log.info("查询当前登录员工信息 v2");
+        StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
+        return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
+    }
+
+    @ApiVersion("5.0.1")
+    @Operation(summary = "查询当前登录员工信息")
+    @GetMapping("/current")
+    public Result<StaffInfoApiVO> userInfoV3() {
+        log.info("查询当前登录员工信息 v3");
         StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
         return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
     }

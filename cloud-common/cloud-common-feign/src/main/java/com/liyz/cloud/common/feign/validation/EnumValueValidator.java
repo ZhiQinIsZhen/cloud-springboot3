@@ -24,7 +24,7 @@ public class EnumValueValidator implements ConstraintValidator<EnumValue, Object
 
     private Class<?>[] targetEnums;
 
-    private Map<Class<?>, Method> methodCache = new HashMap<>();
+    private final Map<Class<?>, Method> methodCache = new HashMap<>();
 
     @Override
     public void initialize(EnumValue constraintAnnotation) {

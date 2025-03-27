@@ -53,6 +53,7 @@
   GlobalControllerExceptionAdvice：全局异常Advice(业务)
   ResultFeignDecoderAdvice：Feign的编码器
   ResultResponseBodyAdvice：ResponseBody Advice(也可以换成Feign的解码器)
+  @ApiVersion：接口版本控制注解，根据http请求header头中appVersion，与接口注解（@ApiVersion）版本进行匹配，选择大于或者等于该注解版本最接近的接口
   ```
 - 3.4 `dubbo-common-exception`: 业务异常通用框架
 - 3.5 `dubbo-common-feign`: SpringCloud的feign通用框架

@@ -31,17 +31,14 @@ public class ApiVersionUtil {
         if (StringUtils.isAnyBlank(sourceVersion, targetVersion)) {
             return -1;
         }
-
         // 将源版本号字符串按点（.）分割并转换为整数列表
-        List<Integer> sourceVersionList = Splitter.on("\\.").splitToList(sourceVersion).stream().map(Integer::parseInt).toList();
+        List<Integer> sourceVersionList = Splitter.on(".").splitToList(sourceVersion).stream().map(Integer::parseInt).toList();
         // 将目标版本号字符串按点（.）分割并转换为整数列表
-        List<Integer> targetVersionList = Splitter.on("\\.").splitToList(targetVersion).stream().map(Integer::parseInt).toList();
-
+        List<Integer> targetVersionList = Splitter.on(".").splitToList(targetVersion).stream().map(Integer::parseInt).toList();
         // 比较版本号列表的长度，如果长度不等，则返回长度差
         if (sourceVersionList.size() != targetVersionList.size()) {
             return sourceVersionList.size() - targetVersionList.size();
         }
-
         // 遍历版本号列表，逐个比较各部分的数值
         for (int i = 0; i < sourceVersionList.size(); i++) {
             // 如果当前部分的版本号不相等，则返回它们的差值
@@ -49,7 +46,6 @@ public class ApiVersionUtil {
                 return sourceVersionList.get(i) - targetVersionList.get(i);
             }
         }
-
         // 如果所有部分的版本号都相等，则返回0
         return 0;
     }

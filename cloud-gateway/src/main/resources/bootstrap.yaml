@@ -9,6 +9,7 @@ spring:
   main:
     web-application-type: reactive
     allow-circular-references: true
+    allow-bean-definition-overriding: true
   application:
     name: cloud-gateway
   threads:
