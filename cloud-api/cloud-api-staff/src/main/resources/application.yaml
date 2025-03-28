@@ -103,3 +103,18 @@ management:
   endpoint:
     health:
       show-details: when_authorized
+# swagger
+swagger:
+  open:
+    info:
+      title: Spring-cloud系统API
+      description: 这是一个基于Springboot3、SpringCloud、Security等框架的脚手架
+      version: 1.0.0
+      termsOfService: http://127.0.0.1:7072/staff/doc.html
+      contact:
+        name: ZhiQinIsZhen
+        url: https://github.com/ZhiQinIsZhen/cloud-springboot3
+        email: liyangzhen0114@foxmail.com
+      license:
+        name: MIT License
+        url: https://github.com/ZhiQinIsZhen/cloud-springboot3/blob/master/LICENSE

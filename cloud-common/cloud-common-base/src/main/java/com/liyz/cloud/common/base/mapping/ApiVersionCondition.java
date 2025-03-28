@@ -1,13 +1,11 @@
 package com.liyz.cloud.common.base.mapping;
 
 import com.liyz.cloud.common.base.util.ApiVersionUtil;
+import com.liyz.cloud.common.util.constant.CommonConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Desc:API版本条件比较器
@@ -32,22 +30,19 @@ public class ApiVersionCondition implements RequestCondition<ApiVersionCondition
 
     @Override
     public ApiVersionCondition getMatchingCondition(HttpServletRequest request) {
-        String appVersion = request.getHeader("appVersion");
-        if (StringUtils.isNotBlank(appVersion)
-                && ApiVersionUtil.compareVersion(appVersion, this.apiVersion) >= 0) {
-            return this;
-        }
-        return null;
+        String appVersion = request.getHeader(CommonConstant.APP_VERSION_KEY);
+        return StringUtils.isNotBlank(appVersion) && ApiVersionUtil.compareVersion(appVersion, this.apiVersion) >= 0 ? this : null;
     }
 
     @Override
     public int compareTo(ApiVersionCondition other, HttpServletRequest request) {
-        String appVersion = request.getHeader("appVersion");
+        int compare = ApiVersionUtil.compareVersion(other.getApiVersion(), this.apiVersion);
+        String appVersion = request.getHeader(CommonConstant.APP_VERSION_KEY);
         if (StringUtils.isNotBlank(appVersion)) {
-            int thisDiff = ApiVersionUtil.compareVersion(appVersion, this.apiVersion);
-            int otherDiff = ApiVersionUtil.compareVersion(appVersion, other.apiVersion);
-            return Integer.compare(thisDiff, otherDiff);
+            int thisCompare = ApiVersionUtil.compareVersion(appVersion, this.apiVersion);
+            int otherCompare = ApiVersionUtil.compareVersion(appVersion, other.apiVersion);
+            return thisCompare != otherCompare ? Integer.compare(thisCompare, otherCompare) : compare;
         }
-        return ApiVersionUtil.compareVersion(other.getApiVersion(), this.apiVersion);
+        return compare;
     }
 }

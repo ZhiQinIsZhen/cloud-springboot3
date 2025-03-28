@@ -1,5 +1,6 @@
 package com.liyz.cloud.api.staff.controller.staff;
 
+import com.liyz.cloud.api.staff.constant.ApiVersionConstant;
 import com.liyz.cloud.api.staff.vo.staff.StaffInfoApiVO;
 import com.liyz.cloud.common.api.context.AuthContext;
 import com.liyz.cloud.common.base.annotation.ApiVersion;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Desc:
+ * Desc:员工信息
  *
  * @author lyz
  * @version 1.0.0
@@ -53,7 +54,7 @@ public class StaffInfoController {
         return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
     }
 
-    @ApiVersion("1.0.1")
+    @ApiVersion(ApiVersionConstant.VERSION_4_9_9)
     @Operation(summary = "查询当前登录员工信息")
     @GetMapping("/current")
     public Result<StaffInfoApiVO> userInfoV2() {
@@ -62,11 +63,20 @@ public class StaffInfoController {
         return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
     }
 
-    @ApiVersion("5.0.1")
+    @ApiVersion(ApiVersionConstant.VERSION_6_8_9)
     @Operation(summary = "查询当前登录员工信息")
     @GetMapping("/current")
     public Result<StaffInfoApiVO> userInfoV3() {
         log.info("查询当前登录员工信息 v3");
+        StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
+        return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
+    }
+
+    @ApiVersion(ApiVersionConstant.VERSION_9_0_1)
+    @Operation(summary = "查询当前登录员工信息")
+    @GetMapping("/current")
+    public Result<StaffInfoApiVO> userInfoV4() {
+        log.info("查询当前登录员工信息 v4");
         StaffInfoVO staffInfoVO = staffInfoFeignService.getByStaffId(AuthContext.getAuthUser().getAuthId());
         return Result.success(BeanUtil.copyProperties(staffInfoVO, StaffInfoApiVO::new));
     }

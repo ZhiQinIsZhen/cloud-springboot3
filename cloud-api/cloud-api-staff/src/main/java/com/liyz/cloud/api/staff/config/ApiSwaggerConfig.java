@@ -1,18 +1,18 @@
 package com.liyz.cloud.api.staff.config;
 
+import com.liyz.cloud.api.staff.properties.SwaggerOpenApiProperties;
+import com.liyz.cloud.common.util.constant.CommonConstant;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 
 /**
- * Desc:
+ * Desc:swagger config
  *
  * @author lyz
  * @version 1.0.0
@@ -21,33 +21,23 @@ import org.springframework.http.HttpHeaders;
 @Configuration
 public class ApiSwaggerConfig {
 
+    @Resource
+    private SwaggerOpenApiProperties swaggerOpenApiProperties;
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .info(new Info()
-                        .title("Spring-cloud系统API")
-                        .version("1.0")
-                        .description( "这是一个基于Springboot3等框架的脚手架")
-                        .termsOfService("http://127.0.0.1:7072/")
-                        .license(new License().name("MIT License").url("http://127.0.0.1:7072/"))
-                        .contact(new Contact()
-                                .name("ZhiQinIsZhen")
-                                .email("liyangzhen0114@foxmail.com")
-                                .url("https://github.com/ZhiQinIsZhen/springcloud-liyz")
-                        )
-                )
+                .info(swaggerOpenApiProperties.getInfo())
                 .addSecurityItem(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION))
-                .components(new Components().addSecuritySchemes(
-                                HttpHeaders.AUTHORIZATION,
-                                new SecurityScheme()
-                                        .name(HttpHeaders.AUTHORIZATION)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("Bearer ")
-                                        .in(SecurityScheme.In.HEADER)
-                                        .description("鉴权Token")
-                        )
-                )
-                ;
+                .components(new Components().addSecuritySchemes(HttpHeaders.AUTHORIZATION, securityScheme()));
     }
 
+    private SecurityScheme securityScheme() {
+        return new SecurityScheme()
+                .name(HttpHeaders.AUTHORIZATION)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme(CommonConstant.SECURITY_SCHEME)
+                .in(SecurityScheme.In.HEADER)
+                .description(CommonConstant.SECURITY_SCHEME_DESC);
+    }
 }
