@@ -65,6 +65,9 @@ public class JwtParseController implements JwtParseFeignService {
 
     @Override
     public AuthUserBO parseToken(String token, String clientId) {
+        if (StringUtils.isBlank(clientId)) {
+            throw new RemoteServiceException(CommonExceptionCodeEnum.AUTHORIZATION_FAIL);
+        }
         AuthJwtDO authJwtDO = authJwtService.getByClientId(clientId);
         if (Objects.isNull(authJwtDO)) {
             log.error("解析token失败, 没有找到该应用下jwt配置信息，clientId：{}", clientId);

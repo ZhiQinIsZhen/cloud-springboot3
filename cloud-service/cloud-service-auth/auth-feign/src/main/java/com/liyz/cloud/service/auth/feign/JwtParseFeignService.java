@@ -23,7 +23,8 @@ public interface JwtParseFeignService {
 
     @Operation(summary = "解析token")
     @GetMapping("/parseToken")
-    AuthUserBO parseToken(@RequestParam("token") String token, @RequestParam("clientId") String clientId);
+    AuthUserBO parseToken(@RequestParam(value = "token", required = false) String token,
+                          @RequestParam(value = "clientId", required = false) String clientId);
 
     @Operation(summary = "生成token")
     @PostMapping("/generateToken")

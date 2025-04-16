@@ -11,11 +11,13 @@ import com.liyz.cloud.common.base.advice.GlobalControllerExceptionAdvice;
 import com.liyz.cloud.common.base.advice.ResultFeignDecoderAdvice;
 import com.liyz.cloud.common.base.advice.ResultResponseBodyAdvice;
 import com.liyz.cloud.common.base.error.ErrorApiController;
+import com.liyz.cloud.common.base.mapping.VersionRequestMappingHandlerMapping;
 import com.liyz.cloud.common.util.DateUtil;
 import com.liyz.cloud.common.util.deserializer.DesensitizationSerializer;
 import com.liyz.cloud.common.util.deserializer.TrimDeserializer;
 import com.liyz.cloud.common.util.serializer.DoubleSerializer;
 import feign.Feign;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -78,6 +81,14 @@ public class CloudCommonBaseAutoConfig implements WebMvcConfigurer {
     @Bean
     public Feign.Builder decodeVoidFeignBuilder() {
         return Feign.builder().decodeVoid();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "api.version", name = "enabled", havingValue = "true")
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        RequestMappingHandlerMapping handlerMapping = new VersionRequestMappingHandlerMapping();
+        handlerMapping.setOrder(0);
+        return handlerMapping;
     }
 
     /**

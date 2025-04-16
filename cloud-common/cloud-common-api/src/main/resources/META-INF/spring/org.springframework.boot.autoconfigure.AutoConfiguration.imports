@@ -1,1 +1,2 @@
 com.liyz.cloud.common.api.config.CloudApiAutoConfig
+com.liyz.cloud.common.api.advice.AuthExceptionHandleAdvice

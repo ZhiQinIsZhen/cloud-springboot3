@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  * @version 1.0.0
  * @date 2025/2/27 16:53
  */
-@Configuration
+//@Configuration
 public class CloudCommonBaseAutoConfigSupport extends WebMvcConfigurationSupport {
 
     @Override

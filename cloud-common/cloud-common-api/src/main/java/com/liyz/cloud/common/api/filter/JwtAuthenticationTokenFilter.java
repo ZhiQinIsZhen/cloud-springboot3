@@ -123,6 +123,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 CookieUtil.addCookie(response, SecurityClientConstant.DEFAULT_TOKEN_HEADER_KEY, token);
             }
         }
-        return StringUtils.isNotBlank(token) ? null : AuthContext.JwtService.parseToken(token);
+        return StringUtils.isBlank(token) ? null : AuthContext.JwtService.parseToken(token);
     }
 }

@@ -118,3 +118,7 @@ swagger:
       license:
         name: MIT License
         url: https://github.com/ZhiQinIsZhen/cloud-springboot3/blob/master/LICENSE
+# 接口版本控制开关
+api:
+  version:
+    enabled: true
