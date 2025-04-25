@@ -1,5 +1,6 @@
 package com.liyz.cloud.common.base.util;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.liyz.cloud.common.util.constant.CommonConstant;
 import lombok.experimental.UtilityClass;
@@ -18,6 +19,9 @@ import java.util.List;
 @Slf4j
 @UtilityClass
 public class ApiVersionUtil {
+
+    public static final String MAX_VERSION = Joiner.on(CommonConstant.PERIOD_SEPARATOR)
+            .join(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     /**
      * 比较两个版本号的大小

@@ -1,0 +1,129 @@
+#server
+server:
+  port: 7074
+  servlet:
+    context-path: /third
+  tomcat:
+    accept-count: 10
+    threads:
+      max: 200
+      min-spare: 50
+  error:
+    path: /liyz/error
+  shutdown: graceful
+# spring
+spring:
+  application:
+    name: cloud-service-third
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  threads:
+    virtual:
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+  # cache
+  cache:
+    cache-names: auth,account
+    type: redis
+    redis:
+      time-to-live: 300000
+      key-prefix: 'third:'
+      cache-null-values: true
+      enable-statistics: true
+      use-key-prefix: true
+  data:
+    # redis
+    redis:
+      database: 2
+      host: 127.0.0.1
+      port: 6379
+      client-type: lettuce
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 1
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true
+      retry:
+        enabled: false
+    nacos:
+      discovery:
+        enabled: true
+        register-enabled: true
+        server-addr: 127.0.0.1:8848
+        namespace: liyz-cloud
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+  # datasource
+  datasource:
+    url: jdbc:mysql://localhost:3306/cloud_third?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8
+    type: com.zaxxer.hikari.HikariDataSource
+    username: root
+    password: root
+    # hikari
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 5
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+# eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8050/eureka/
+  instance:
+    health-check-url-path: /actuator/health
+# log
+logging:
+  file:
+    name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'
+  level:
+    com.liyz.cloud.service.third.dao: debug
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
+# springdoc
+springdoc:
+  default-flat-param-object: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  group-configs:
+    - group: all
+      display-name: 所有接口
+      paths-to-match:
+        - /**
+      packages-to-scan:
+        - com.liyz.cloud.service.third.controller
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    swagger-model-name: 实体类列表
+  basic:
+    username: abc
+    password: 123
+    enable: false
+# management
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  endpoint:
+    health:
+      show-details: when_authorized
+# third
+third:
+  qcc:
+    domain: https://api.qichacha.com
+    key: lyz
+    secret: lyz
+    enable: true

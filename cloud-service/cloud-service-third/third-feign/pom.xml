@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liyz.cloud</groupId>
-        <artifactId>cloud-service-staff</artifactId>
+        <artifactId>cloud-service-third</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>staff-feign</artifactId>
+    <artifactId>third-feign</artifactId>
 
     <dependencies>
         <dependency>

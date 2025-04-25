@@ -5,18 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liyz.cloud</groupId>
-        <artifactId>cloud-springboot3</artifactId>
+        <artifactId>cloud-service</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cloud-service</artifactId>
+    <artifactId>cloud-service-third</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>cloud-service-eureka</module>
-        <module>cloud-service-staff</module>
-        <module>cloud-service-auth</module>
-        <module>cloud-service-third</module>
+        <module>third-biz</module>
+        <module>third-dao</module>
+        <module>third-feign</module>
+        <module>third-web</module>
     </modules>
 
 </project>

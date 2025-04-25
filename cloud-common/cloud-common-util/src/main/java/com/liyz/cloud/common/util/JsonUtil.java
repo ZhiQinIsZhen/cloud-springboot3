@@ -2,6 +2,7 @@ package com.liyz.cloud.common.util;
 
 import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +78,14 @@ public class JsonUtil {
             return null;
         }
         return OBJECT_MAPPER.treeToValue(jsonNode, clazz);
+    }
+
+    @SneakyThrows
+    public static <T> T readValue(String content, TypeReference<T> valueTypeRef) {
+        if (StringUtils.isBlank(content) || Objects.isNull(valueTypeRef)) {
+            return null;
+        }
+        return OBJECT_MAPPER.readValue(content, valueTypeRef);
     }
 
     @SneakyThrows

@@ -25,6 +25,8 @@ public enum CommonExceptionCodeEnum implements IExceptionService{
     REFLECTOR_FAIL("10010", "反射失败"),
     THREAD_INTERRUPTED("10011", "线程中断执行"),
     EXECUTION_EXCEPTION("10012", "线程执行异常"),
+    PARAMS_IS_NULL("10013", "参数为空"),
+    COLLECTION_IS_EMPTY("10014", "集合为空"),
 
     DEC_KEY_LENGTH_ERROR("13001", "DEC加密Key长度不能小于8位"),
     DEC_IV_LENGTH_ERROR("13002", "DEC加密IV长度必须等于8位"),
@@ -47,7 +49,6 @@ public enum CommonExceptionCodeEnum implements IExceptionService{
     private final String code;
 
     private final String message;
-    ;
 
     CommonExceptionCodeEnum(String code, String message) {
         this.code = code;
