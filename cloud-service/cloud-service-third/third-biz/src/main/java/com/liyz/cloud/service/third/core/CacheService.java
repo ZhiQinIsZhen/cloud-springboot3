@@ -10,7 +10,7 @@ import com.liyz.cloud.service.third.parse.ParseResult;
  * @version 1.0.0
  * @date 2025-04-24 17:07
  */
-public interface CacheEsService<Q extends ThirdBaseDTO, T> {
+public interface CacheService<Q extends ThirdBaseDTO, T> {
 
     /**
      * 查询缓存
@@ -19,4 +19,12 @@ public interface CacheEsService<Q extends ThirdBaseDTO, T> {
      * @return 解析后的数据
      */
     ParseResult<T> queryCache(Q req);
+
+    /**
+     * 保存缓存
+     *
+     * @param parseResult 解析后的数据
+     * @return bool
+     */
+    Boolean saveCache(ParseResult<T> parseResult);
 }

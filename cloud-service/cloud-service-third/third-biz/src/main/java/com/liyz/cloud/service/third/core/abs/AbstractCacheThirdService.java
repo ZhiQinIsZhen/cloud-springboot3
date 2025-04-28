@@ -2,14 +2,16 @@ package com.liyz.cloud.service.third.core.abs;
 
 import com.google.common.collect.Lists;
 import com.liyz.cloud.common.feign.bo.RemotePage;
+import com.liyz.cloud.common.feign.bo.auth.AuthUserBO;
 import com.liyz.cloud.common.util.AssertUtil;
 import com.liyz.cloud.service.third.constant.ThirdExceptionCodeEnum;
-import com.liyz.cloud.service.third.core.CacheEsService;
+import com.liyz.cloud.service.third.core.CacheService;
 import com.liyz.cloud.service.third.core.channel.ChannelService;
 import com.liyz.cloud.service.third.core.channel.abs.AbstractChannelService;
 import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
 import com.liyz.cloud.service.third.parse.ParseResult;
 import feign.Response;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -26,9 +28,13 @@ import java.util.Objects;
  * @date 2025-04-24 15:59
  */
 public abstract class AbstractCacheThirdService<Q extends ThirdBaseDTO, T> extends AbstractThirdService<Q>
-        implements CacheEsService<Q, T> {
+        implements CacheService<Q, T> {
 
+    private final ThreadLocal<Q> reqContext = new ThreadLocal<>();
+
+    @Getter
     private final Class<Q> reqClass;
+    @Getter
     private final Class<T> resClass;
 
     public AbstractCacheThirdService() {
@@ -45,33 +51,38 @@ public abstract class AbstractCacheThirdService<Q extends ThirdBaseDTO, T> exten
      * @return 解析后的数据
      */
     private ParseResult<T> queryData(Q req) {
-        //校验参数
-        this.validateParam(req);
-        //查询策略
-        ChannelService channelService = AbstractChannelService.getChannelService(req.getQueryStrategy());
-        AssertUtil.notNull(channelService, ThirdExceptionCodeEnum.QUERY_STRATEGY_NOT_EXIST);
-        ParseResult<T> parseResult = channelService.queryChannel(req, this);
-        if (!parseResult.isCallThird()) {
+        try {
+            reqContext.set(req);
+            //校验参数
+            this.validateParam();
+            //查询策略
+            ChannelService channelService = AbstractChannelService.getChannelService(req.getQueryStrategy());
+            AssertUtil.notNull(channelService, ThirdExceptionCodeEnum.QUERY_STRATEGY_NOT_EXIST);
+            ParseResult<T> parseResult = channelService.queryChannel(req, this);
+            if (!parseResult.isCallThird()) {
+                return parseResult;
+            }
+            //调用第三方
+            String response = this.query(req);
+            if (StringUtils.isBlank(response)) {
+                return new ParseResult<>();
+            }
+            //todo 记入日志
+            //解析第三方返回数据
+            parseResult = this.parseThirdResponse(response);
+            //存入缓存
+            this.saveCache(parseResult);
             return parseResult;
+        } finally {
+            reqContext.remove();
         }
-        //调用第三方
-        String response = this.query(req);
-        if (StringUtils.isBlank(response)) {
-            return new ParseResult<>();
-        }
-        //todo 记入日志
-        //解析第三方返回数据
-        parseResult = parseThirdResponse(response);
-        //todo 存入缓存
-        return parseResult;
     }
 
     /**
      * 校验参数
-     *
-     * @param req 请求参数
      */
-    protected void validateParam(Q req) {
+    protected void validateParam() {
+        Q req = reqContext.get();
         AssertUtil.isTure(this.getThirdType() == req.getThirdType(), ThirdExceptionCodeEnum.THIRD_TYPE_NOT_SAME);
     }
 
@@ -143,5 +154,33 @@ public abstract class AbstractCacheThirdService<Q extends ThirdBaseDTO, T> exten
     public ParseResult<T> queryCache(Q req) {
         //todo 缓存查询
         return null;
+    }
+
+    @Override
+    public Boolean saveCache(ParseResult<T> parseResult) {
+        if (Objects.isNull(parseResult) || CollectionUtils.isEmpty(parseResult.getDataList())) {
+            return Boolean.FALSE;
+        }
+        //todo 缓存保存
+        return doSaveCache(parseResult);
+    }
+
+    /**
+     * 缓存保存
+     *
+     * @param parseResult 解析结果
+     * @return bool
+     */
+    protected Boolean doSaveCache(ParseResult<T> parseResult) {
+        return Boolean.TRUE;
+    }
+
+    /**
+     * 获取上下文中的请求参数
+     *
+     * @return Q
+     */
+    public Q getReqByContext() {
+        return reqContext.get();
     }
 }

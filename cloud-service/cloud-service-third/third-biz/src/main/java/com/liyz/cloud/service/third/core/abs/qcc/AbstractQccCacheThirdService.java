@@ -36,8 +36,8 @@ public abstract class AbstractQccCacheThirdService<Q extends ThirdBaseDTO, T> ex
     private QccProperties qccProperties;
 
     @Override
-    protected void validateParam(Q req) {
-        super.validateParam(req);
+    protected void validateParam() {
+        super.validateParam();
         AssertUtil.isTure(qccProperties.isEnable(), ThirdExceptionCodeEnum.THIRD_CLOSED);
     }
 

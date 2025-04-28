@@ -6,6 +6,8 @@ import com.liyz.cloud.common.feign.validation.EnumValue;
 import com.liyz.cloud.service.third.constant.QueryStrategy;
 import com.liyz.cloud.service.third.constant.ThirdType;
 import com.liyz.cloud.service.third.dto.qcc.page.QccCompanySearchPageDTO;
+import com.liyz.cloud.service.third.dto.uniview.one.UniViewLoginDTO;
+import com.liyz.cloud.service.third.dto.uniview.page.UniViewDevicePageDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +23,9 @@ import lombok.Setter;
 @Setter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "thirdType", visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = QccCompanySearchPageDTO.class, name = "QCC_PAGE_COMPANY_SEARCH")
+        @JsonSubTypes.Type(value = QccCompanySearchPageDTO.class, name = "QCC_PAGE_COMPANY_SEARCH"),
+        @JsonSubTypes.Type(value = UniViewLoginDTO.class, name = "UNIVIEW_ONE_LOGIN"),
+        @JsonSubTypes.Type(value = UniViewDevicePageDTO.class, name = "UNIVIEW_PAGE_DEVICE")
 })
 public class ThirdBaseDTO {
 

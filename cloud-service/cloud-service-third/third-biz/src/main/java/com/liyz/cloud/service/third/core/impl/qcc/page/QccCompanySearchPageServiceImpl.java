@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Objects;
 
 /**
- * Desc:
+ * Desc:企查查模糊查询企业
  *
  * @author lyz
  * @version 1.0.0

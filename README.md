@@ -65,6 +65,7 @@
     ```text
     4.2.1 使用shardingsphere-jdbc对登录登出日志进行分表
     ```
+- 4.3 `cloud-service-third`: 三方接口服务（统一调用第三方数据的服务）
 5 `cloud-gateway`：统一网关层，鉴权限流都会在这步做，[接口文档地址](http://127.0.0.1:8080/doc.html)
 - 6.1 `GlobalRequestTimeFilter`：打印每个请求时间的耗时(生产可以加上配置，只打印耗时超过ms的请求)
 - 6.2 `GlobalJWTFilter`：认证全局过滤器

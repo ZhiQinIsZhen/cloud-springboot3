@@ -60,12 +60,23 @@ public abstract class AbstractThirdService<Q extends ThirdBaseDTO> implements Th
         try {
             URI uri = UriComponentsBuilder.fromUriString(this.getDomain()).path(this.getThirdType().getSubUrl())
                     .queryParams(addQueryParams(req)).build(uriVariables(req));
-            return webClient.method(getHttpMethod())
-                    .uri(uri)
-                    .headers(headers -> addHttpHeaders(req, headers))
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            if (getHttpMethod() == HttpMethod.GET) {
+                return webClient.get()
+                        .uri(uri)
+                        .headers(headers -> addHttpHeaders(req, headers))
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+            } else {
+                return webClient.method(getHttpMethod())
+                        .uri(uri)
+                        .headers(headers -> addHttpHeaders(req, headers))
+                        .bodyValue(getReqBody(req))
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+            }
+
         } catch (Exception e) {
             log.error("三方接口({})调用获取body失败", this.getThirdType().getThirdName(), e);
             throw new RemoteServiceException(ThirdExceptionCodeEnum.THIRD_CALL_FAIL);

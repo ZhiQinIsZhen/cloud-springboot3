@@ -1,12 +1,11 @@
 package com.liyz.cloud.service.third.core.channel.impl;
 
 import com.liyz.cloud.service.third.constant.QueryStrategy;
-import com.liyz.cloud.service.third.core.CacheEsService;
+import com.liyz.cloud.service.third.core.CacheService;
 import com.liyz.cloud.service.third.core.channel.abs.AbstractChannelService;
 import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
 import com.liyz.cloud.service.third.parse.ParseResult;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Objects;
 
@@ -26,8 +25,8 @@ public class OnlyCacheChannelService<Q extends ThirdBaseDTO, T> extends Abstract
     }
 
     @Override
-    public ParseResult<T> queryChannel(Q req, CacheEsService<Q, T> cacheEsService) {
-        ParseResult<T> parseResult = cacheEsService.queryCache(req);
+    public ParseResult<T> queryChannel(Q req, CacheService<Q, T> cacheService) {
+        ParseResult<T> parseResult = cacheService.queryCache(req);
         if (Objects.isNull(parseResult)) {
             parseResult = new ParseResult<>();
         }

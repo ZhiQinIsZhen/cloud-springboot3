@@ -1,7 +1,11 @@
 package com.liyz.cloud.service.third.constant;
 
 import com.liyz.cloud.service.third.dto.qcc.page.QccCompanySearchPageDTO;
+import com.liyz.cloud.service.third.dto.uniview.one.UniViewLoginDTO;
+import com.liyz.cloud.service.third.dto.uniview.page.UniViewDevicePageDTO;
 import com.liyz.cloud.service.third.vo.qcc.page.QccCompanySearchVO;
+import com.liyz.cloud.service.third.vo.uniview.one.UniViewLoginVO;
+import com.liyz.cloud.service.third.vo.uniview.page.UniViewDeviceVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,6 +22,11 @@ public enum ThirdType {
     QCC_PAGE_COMPANY_SEARCH(10010001, QccCompanySearchPageDTO.class, QccCompanySearchVO.class, "/FuzzySearch/GetList",
             "qcc_company_search", "企查查-企业模糊搜索"),
 
+
+    UNIVIEW_ONE_LOGIN(10100001, UniViewLoginDTO.class, UniViewLoginVO.class, "/openapi/user/app/token/get",
+            null, "宇视-登录"),
+    UNIVIEW_PAGE_DEVICE(10100002, UniViewDevicePageDTO.class, UniViewDeviceVO.class, "/openapi/device/list",
+            null, "宇视-设备列表"),
     ;
 
     /**

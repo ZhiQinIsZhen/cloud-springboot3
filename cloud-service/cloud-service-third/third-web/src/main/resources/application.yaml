@@ -127,3 +127,9 @@ third:
     key: lyz
     secret: lyz
     enable: true
+  uniview:
+    enable: true
+    domain: https://ezcloud.uniview.com
+    app-id: lyz
+    secret-key: lyz
+    sign-key: lyz

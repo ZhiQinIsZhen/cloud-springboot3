@@ -1,7 +1,7 @@
 package com.liyz.cloud.service.third.core.channel.impl;
 
 import com.liyz.cloud.service.third.constant.QueryStrategy;
-import com.liyz.cloud.service.third.core.CacheEsService;
+import com.liyz.cloud.service.third.core.CacheService;
 import com.liyz.cloud.service.third.core.channel.abs.AbstractChannelService;
 import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
 import com.liyz.cloud.service.third.parse.ParseResult;
@@ -23,7 +23,7 @@ public class NonCacheChannelService<Q extends ThirdBaseDTO, T> extends AbstractC
     }
 
     @Override
-    public ParseResult<T> queryChannel(Q req, CacheEsService<Q, T> cacheEsService) {
+    public ParseResult<T> queryChannel(Q req, CacheService<Q, T> cacheService) {
         ParseResult<T> parseResult = new ParseResult<>();
         parseResult.setCallThird(true);
         return parseResult;

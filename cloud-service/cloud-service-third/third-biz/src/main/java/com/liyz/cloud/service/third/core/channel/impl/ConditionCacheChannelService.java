@@ -1,7 +1,7 @@
 package com.liyz.cloud.service.third.core.channel.impl;
 
 import com.liyz.cloud.service.third.constant.QueryStrategy;
-import com.liyz.cloud.service.third.core.CacheEsService;
+import com.liyz.cloud.service.third.core.CacheService;
 import com.liyz.cloud.service.third.core.channel.abs.AbstractChannelService;
 import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
 import com.liyz.cloud.service.third.parse.ParseResult;
@@ -26,8 +26,8 @@ public class ConditionCacheChannelService<Q extends ThirdBaseDTO, T> extends Abs
     }
 
     @Override
-    public ParseResult<T> queryChannel(Q req, CacheEsService<Q, T> cacheEsService) {
-        ParseResult<T> parseResult = cacheEsService.queryCache(req);
+    public ParseResult<T> queryChannel(Q req, CacheService<Q, T> cacheService) {
+        ParseResult<T> parseResult = cacheService.queryCache(req);
         if (Objects.isNull(parseResult)) {
             parseResult = new ParseResult<>();
         }

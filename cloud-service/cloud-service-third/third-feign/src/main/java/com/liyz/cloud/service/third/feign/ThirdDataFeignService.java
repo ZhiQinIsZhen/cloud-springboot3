@@ -3,6 +3,7 @@ package com.liyz.cloud.service.third.feign;
 import com.liyz.cloud.common.feign.bo.RemotePage;
 import com.liyz.cloud.service.third.constant.ThirdConstant;
 import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
+import com.liyz.cloud.service.third.dto.ThirdBasePageDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @FeignClient(value = ThirdConstant.APPLICATION_NAME, contextId = "ThirdDataFeignService",
         path = ThirdConstant.CONTEXT_PATH + ThirdConstant.THIRD_DATA_URL)
-public interface ThirdDataFeignService<Q extends ThirdBaseDTO, T> {
+public interface ThirdDataFeignService {
 
     /**
      * 查询单条
@@ -30,7 +31,7 @@ public interface ThirdDataFeignService<Q extends ThirdBaseDTO, T> {
      */
     @Operation(summary = "查询单条")
     @PostMapping("/getOne")
-    T getOne(@Valid @RequestBody Q req);
+    <T> T getOne(@Valid @RequestBody ThirdBaseDTO req);
 
     /**
      * 查询列表
@@ -40,7 +41,7 @@ public interface ThirdDataFeignService<Q extends ThirdBaseDTO, T> {
      */
     @Operation(summary = "查询列表")
     @PostMapping("/getList")
-    List<T> getList(@Valid @RequestBody Q req);
+    <T> List<T> getList(@Valid @RequestBody ThirdBaseDTO req);
 
     /**
      * 查询分页
@@ -50,5 +51,5 @@ public interface ThirdDataFeignService<Q extends ThirdBaseDTO, T> {
      */
     @Operation(summary = "查询分页")
     @PostMapping("/getPage")
-    RemotePage<T> getPage(@Valid @RequestBody Q req);
+    <T> RemotePage<T> getPage(@Valid @RequestBody ThirdBasePageDTO req);
 }

@@ -3,6 +3,7 @@ package com.liyz.cloud.service.third.controller;
 import com.liyz.cloud.common.feign.bo.RemotePage;
 import com.liyz.cloud.service.third.constant.ThirdConstant;
 import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
+import com.liyz.cloud.service.third.dto.ThirdBasePageDTO;
 import com.liyz.cloud.service.third.feign.ThirdDataFeignService;
 import com.liyz.cloud.service.third.service.ThirdDataService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,23 +23,23 @@ import java.util.List;
 @Tag(name = "三方服务")
 @RestController
 @RequestMapping(ThirdConstant.THIRD_DATA_URL)
-public class ThirdDataController<Q extends ThirdBaseDTO, T> implements ThirdDataFeignService<Q, T> {
+public class ThirdDataController implements ThirdDataFeignService {
 
     @Resource
-    private ThirdDataService<Q, T> thirdDataService;
+    private ThirdDataService thirdDataService;
 
     @Override
-    public T getOne(Q req) {
-        return thirdDataService.getOne(req);
+    public <T> T getOne(ThirdBaseDTO req) {
+        return (T) thirdDataService.getOne(req);
     }
 
     @Override
-    public List<T> getList(Q req) {
+    public <T> List<T> getList(ThirdBaseDTO req) {
         return thirdDataService.getList(req);
     }
 
     @Override
-    public RemotePage<T> getPage(Q req) {
+    public <T> RemotePage<T> getPage(ThirdBasePageDTO req) {
         return thirdDataService.getPage(req);
     }
 }
