@@ -2,7 +2,6 @@ package com.liyz.cloud.service.third.core.abs;
 
 import com.google.common.collect.Lists;
 import com.liyz.cloud.common.feign.bo.RemotePage;
-import com.liyz.cloud.common.feign.bo.auth.AuthUserBO;
 import com.liyz.cloud.common.util.AssertUtil;
 import com.liyz.cloud.service.third.constant.ThirdExceptionCodeEnum;
 import com.liyz.cloud.service.third.core.CacheService;
@@ -161,7 +160,6 @@ public abstract class AbstractCacheThirdService<Q extends ThirdBaseDTO, T> exten
         if (Objects.isNull(parseResult) || CollectionUtils.isEmpty(parseResult.getDataList())) {
             return Boolean.FALSE;
         }
-        //todo 缓存保存
         return doSaveCache(parseResult);
     }
 

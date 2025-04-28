@@ -3,10 +3,7 @@ package com.liyz.cloud.common.util;
 import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.liyz.cloud.common.util.serializer.DoubleSerializer;
@@ -94,6 +91,14 @@ public class JsonUtil {
     }
 
     @SneakyThrows
+    public <T> T readValue(String content, JavaType valueType) {
+        if (StringUtils.isBlank(content) || Objects.isNull(valueType)) {
+            return null;
+        }
+        return OBJECT_MAPPER.readValue(content, valueType);
+    }
+
+    @SneakyThrows
     public static JsonNode readTree(Object obj) {
         if (Objects.isNull(obj)) {
             return null;
@@ -102,5 +107,9 @@ public class JsonUtil {
             return OBJECT_MAPPER.readTree((String) obj);
         }
         return OBJECT_MAPPER.readTree(OBJECT_MAPPER.writeValueAsString(obj));
+    }
+
+    public static JavaType getJavaType(Class<?> parametrized, Class<?>... parameterClasses) {
+        return OBJECT_MAPPER.getTypeFactory().constructParametricType(parametrized, parameterClasses);
     }
 }

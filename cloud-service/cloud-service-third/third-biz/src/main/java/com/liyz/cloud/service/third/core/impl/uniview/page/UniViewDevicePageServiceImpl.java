@@ -55,9 +55,4 @@ public class UniViewDevicePageServiceImpl extends AbstractUniViewCacheThirdServi
         }
         return parseResult;
     }
-
-    @Override
-    protected UniViewBaseResponse<UniViewDeviceVO> parseJson(String json) {
-        return JsonUtil.readValue(json, new TypeReference<>() {});
-    }
 }

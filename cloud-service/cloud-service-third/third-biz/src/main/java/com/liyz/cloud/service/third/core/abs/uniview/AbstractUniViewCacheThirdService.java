@@ -1,6 +1,6 @@
 package com.liyz.cloud.service.third.core.abs.uniview;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.google.common.collect.Lists;
 import com.liyz.cloud.common.exception.RemoteServiceException;
 import com.liyz.cloud.common.util.AssertUtil;
@@ -15,9 +15,7 @@ import com.liyz.cloud.service.third.dto.ThirdBaseDTO;
 import com.liyz.cloud.service.third.dto.uniview.one.UniViewLoginDTO;
 import com.liyz.cloud.service.third.parse.ParseResult;
 import com.liyz.cloud.service.third.parse.uniview.UniViewBaseResponse;
-import com.liyz.cloud.service.third.parse.uniview.UniViewDevicePageResponse;
 import com.liyz.cloud.service.third.properties.UniViewProperties;
-import com.liyz.cloud.service.third.service.ThirdDataService;
 import com.liyz.cloud.service.third.vo.uniview.one.UniViewLoginVO;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpHeaders;
@@ -62,7 +60,8 @@ public abstract class AbstractUniViewCacheThirdService<Q extends ThirdBaseDTO, T
 
     @Override
     protected ParseResult<T> parseThirdResponse(String response) {
-        UniViewBaseResponse<T> uniViewBaseResponse = parseJson(response);
+        JavaType javaType = JsonUtil.getJavaType(UniViewBaseResponse.class, this.getResClass());
+        UniViewBaseResponse<T> uniViewBaseResponse = JsonUtil.readValue(response, javaType);
         uniViewBaseResponse = this.checkResponseStatus(uniViewBaseResponse);
         ParseResult<T> parseResult = new ParseResult<>();
         parseResult.setDataList(Lists.newArrayList());
@@ -114,6 +113,4 @@ public abstract class AbstractUniViewCacheThirdService<Q extends ThirdBaseDTO, T
     protected HttpMethod getHttpMethod() {
         return HttpMethod.POST;
     }
-
-    protected abstract UniViewBaseResponse<T> parseJson(String json);
 }

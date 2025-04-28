@@ -1,15 +1,12 @@
 package com.liyz.cloud.service.third.core.impl.uniview.one;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.liyz.cloud.common.util.DateUtil;
-import com.liyz.cloud.common.util.JsonUtil;
 import com.liyz.cloud.service.third.constant.ThirdType;
 import com.liyz.cloud.service.third.core.OneThirdService;
 import com.liyz.cloud.service.third.core.abs.uniview.AbstractUniViewCacheThirdService;
 import com.liyz.cloud.service.third.dto.uniview.one.UniViewLoginDTO;
 import com.liyz.cloud.service.third.parse.ParseResult;
-import com.liyz.cloud.service.third.parse.uniview.UniViewBaseResponse;
 import com.liyz.cloud.service.third.vo.uniview.one.UniViewLoginVO;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
@@ -83,10 +80,5 @@ public class UniViewLoginOneServiceImpl extends AbstractUniViewCacheThirdService
     @Override
     protected boolean isLogin() {
         return true;
-    }
-
-    @Override
-    protected UniViewBaseResponse<UniViewLoginVO> parseJson(String json) {
-        return JsonUtil.readValue(json, new TypeReference<>() {});
     }
 }
