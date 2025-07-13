@@ -13,23 +13,23 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <springboot.version>3.4.2</springboot.version>
-        <spring-cloud.version>2024.0.0</spring-cloud.version>
-        <hutool.version>5.8.36</hutool.version>
-        <google.guava.version>33.3.1-jre</google.guava.version>
+        <springboot.version>3.5.3</springboot.version>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <hutool.version>5.8.39</hutool.version>
+        <google.guava.version>33.4.8-jre</google.guava.version>
         <knife4j.version>4.5.0</knife4j.version>
-        <mybatis.plus.version>3.5.10.1</mybatis.plus.version>
-        <redisson.version>3.39.0</redisson.version>
+        <mybatis.plus.version>3.5.12</mybatis.plus.version>
+        <redisson.version>3.50.0</redisson.version>
         <io.jwt.version>0.12.6</io.jwt.version>
         <elasticjob.version>3.0.4</elasticjob.version>
         <shardingsphere.version>5.5.2</shardingsphere.version>
-        <excel.version>4.0.3</excel.version>
-        <springboot.admin.version>3.4.2</springboot.admin.version>
-        <alibaba.cloud.version>2023.0.3.2</alibaba.cloud.version>
-        <rocketmq.version>2.3.2</rocketmq.version>
-        <kafka.version>3.3.2</kafka.version>
-        <xxl.job.version>3.0.0</xxl.job.version>
-        <springdoc.version>2.8.5</springdoc.version>
+        <fast.excel.version>1.2.0</fast.excel.version>
+        <springboot.admin.version>3.5.1</springboot.admin.version>
+        <alibaba.cloud.version>2023.0.3.3</alibaba.cloud.version>
+        <rocketmq.version>2.3.4</rocketmq.version>
+        <kafka.version>4.0.0-M2</kafka.version>
+        <xxl.job.version>3.1.1</xxl.job.version>
+        <springdoc.version>2.8.9</springdoc.version>
     </properties>
 
     <dependencyManagement>

@@ -23,20 +23,22 @@ spring:
         server-addr: 127.0.0.1:8848
         namespace: liyz-cloud
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: cloud-api-staff
-          uri: lb://cloud-api-staff
-          predicates:
-            - Path=/staff/**
-          filters:
-            - name: GlobalAuthInfoHeaderFilter
-              args:
-                name: AUTH_INFO
-                value: BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: cloud-api-staff
+              uri: lb://cloud-api-staff
+              predicates:
+                - Path=/staff/**
+              filters:
+                - name: GlobalAuthInfoHeaderFilter
+                  args:
+                    name: AUTH_INFO
+                    value: BdbGFURCLfHFgg3qmhaBxG0LG6rYuhST
   # redis
   data:
     redis:
