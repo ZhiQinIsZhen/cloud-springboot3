@@ -5,22 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liyz.cloud</groupId>
-        <artifactId>cloud-springboot3</artifactId>
+        <artifactId>cloud-service</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cloud-common</artifactId>
+    <artifactId>cloud-service-search</artifactId>
     <packaging>pom</packaging>
-
     <modules>
-        <module>cloud-common-util</module>
-        <module>cloud-common-exception</module>
-        <module>cloud-common-dao</module>
-        <module>cloud-common-api</module>
-        <module>cloud-common-base</module>
-        <module>cloud-common-feign</module>
-        <module>cloud-common-xxl-job</module>
-        <module>cloud-common-search</module>
+        <module>search-biz</module>
+        <module>search-dao</module>
+        <module>search-feign</module>
+        <module>search-web</module>
     </modules>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 </project>

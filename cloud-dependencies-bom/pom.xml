@@ -121,9 +121,9 @@
                 <version>${io.jwt.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>easyexcel</artifactId>
-                <version>${excel.version}</version>
+                <groupId>cn.idev.excel</groupId>
+                <artifactId>fastexcel</artifactId>
+                <version>${fast.excel.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere.elasticjob</groupId>
@@ -194,6 +194,11 @@
             <dependency>
                 <groupId>com.liyz.cloud</groupId>
                 <artifactId>cloud-common-xxl-job</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.liyz.cloud</groupId>
+                <artifactId>cloud-common-search</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

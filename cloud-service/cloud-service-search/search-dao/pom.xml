@@ -5,19 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liyz.cloud</groupId>
-        <artifactId>cloud-springboot3</artifactId>
+        <artifactId>cloud-service-search</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cloud-service</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>search-dao</artifactId>
 
-    <modules>
-        <module>cloud-service-eureka</module>
-        <module>cloud-service-staff</module>
-        <module>cloud-service-auth</module>
-        <module>cloud-service-third</module>
-        <module>cloud-service-search</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

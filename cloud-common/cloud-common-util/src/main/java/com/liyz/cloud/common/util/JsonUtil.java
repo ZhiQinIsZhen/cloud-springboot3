@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.liyz.cloud.common.util.serializer.DoubleSerializer;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.ObjectUtils;
@@ -29,6 +30,7 @@ import java.util.TimeZone;
 @UtilityClass
 public class JsonUtil {
 
+    @Getter
     private static final ObjectMapper OBJECT_MAPPER = Jackson2ObjectMapperBuilder
             .json()
             .createXmlMapper(false)
@@ -38,6 +40,7 @@ public class JsonUtil {
             .enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false)
+            .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
             .registerModule(new SimpleModule()
                     .addSerializer(Long.class, ToStringSerializer.instance)
                     .addSerializer(Long.TYPE, ToStringSerializer.instance)

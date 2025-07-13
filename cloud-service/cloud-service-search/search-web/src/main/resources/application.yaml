@@ -1,0 +1,110 @@
+#server
+server:
+  port: 7075
+  servlet:
+    context-path: /search
+  tomcat:
+    accept-count: 10
+    threads:
+      max: 200
+      min-spare: 50
+  error:
+    path: /liyz/error
+  shutdown: graceful
+# spring
+spring:
+  application:
+    name: cloud-service-search
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  threads:
+    virtual:
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+  data:
+    # redis
+    redis:
+      database: 5
+      host: 127.0.0.1
+      port: 6379
+      client-type: lettuce
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 1
+  # elasticsearch
+  elasticsearch:
+    uris: http://127.0.0.1:9200,http://127.0.0.1:9201,http://127.0.0.1:9202
+    #    username: liyz
+    #    password: liyz
+    connection-timeout: 5000ms
+    socket-timeout: 30000ms
+    pool:
+      max-conn-total: 100
+      max-conn-per-route: 20
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true
+      retry:
+        enabled: false
+    nacos:
+      discovery:
+        enabled: true
+        register-enabled: true
+        server-addr: 127.0.0.1:8848
+        namespace: liyz-cloud
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+# eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8050/eureka/
+  instance:
+    health-check-url-path: /actuator/health
+# log
+logging:
+  file:
+    name: '\srv\logs\${spring.application.name}\${spring.application.name}.log'
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
+# springdoc
+springdoc:
+  default-flat-param-object: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  group-configs:
+    - group: all
+      display-name: 所有接口
+      paths-to-match:
+        - /**
+      packages-to-scan:
+        - com.liyz.cloud.service.search.feign
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    swagger-model-name: 实体类列表
+  basic:
+    username: abc
+    password: 123
+    enable: false
+# management
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  endpoint:
+    health:
+      show-details:
+  health:
+    elasticsearch:
+      enabled: false
